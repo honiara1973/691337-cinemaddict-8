@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анна](https://up.htmlacademy.ru/ecmascript/8/user/691337).
-* Наставник: `Неизвестно`.
+* Наставник: `Александр Тимоновский`.
 
 ---
 
