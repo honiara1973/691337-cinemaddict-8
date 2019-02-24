@@ -4,21 +4,13 @@ import makeCardElement from './make_card';
 const CARDS_AMOUNT_INITIAL = 7;
 const CARDS_AMOUNT_TOP = 2;
 
-const Filters = [
-  [`All movies`, 0], [`Watchlist`, 13], [`History`, 4], [`Favorites`, 8], [`Stats`, 0]
-];
+const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max + 1 - min)) + min;
 
 const filterContainer = document.querySelector(`.main-navigation`);
-Filters.forEach(([first, second]) =>
-  filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(first, second)));
-
-const filmsList = document.querySelector(`.films-list`);
-const filmsListContainer = filmsList.querySelector(`.films-list__container`);
-
-const filmsListExtras = Array.from(document.querySelectorAll(`.films-list--extra`))
-.map((it) => it.querySelector(`.films-list__container`));
+const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
+const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
 
 const addCards = (container, amount, controls) => {
 
@@ -28,8 +20,14 @@ const addCards = (container, amount, controls) => {
 
 };
 
-addCards(filmsListContainer, CARDS_AMOUNT_INITIAL);
-filmsListExtras.forEach((it) => addCards(it, CARDS_AMOUNT_TOP, false));
+const init = () => {
+  Filters.forEach((it) =>
+    filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(it, getRandomInt(1, 20))));
+  addCards(filmsListContainer, CARDS_AMOUNT_INITIAL);
+  filmsListExtras.forEach((it) => addCards(it, CARDS_AMOUNT_TOP, false));
+};
+
+init();
 
 filterContainer.addEventListener(`click`, () => {
 
