@@ -1,23 +1,21 @@
-import makeFilterElement from './make_filter';
-import makeCardElement from './make_card';
+import makeFilterElement from './make-filter';
+import makeCardElement from './make-card';
+import getAllFilms from './film-data';
+import {getRandomInt} from './utils';
 
 const CARDS_AMOUNT_INITIAL = 7;
 const CARDS_AMOUNT_TOP = 2;
 
 const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
-const getRandomInt = (min, max) => Math.floor(Math.random() * (max + 1 - min)) + min;
-
 const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
 
 const addCards = (container, amount, controls) => {
-
-  for (let i = 0; i < amount; i++) {
-    container.insertAdjacentHTML(`beforeEnd`, makeCardElement(controls));
-  }
-
+  getAllFilms()
+  .reduce((acc, it) => acc.length < amount ? [...acc,
+    container.insertAdjacentHTML(`beforeEnd`, makeCardElement(it, controls))] : acc, []);
 };
 
 const init = () => {

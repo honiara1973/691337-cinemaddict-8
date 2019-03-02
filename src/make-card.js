@@ -1,4 +1,4 @@
-export default (controls = true) => {
+export default (film, controls = true) => {
   return `
   <article
   ${controls ? `
@@ -6,19 +6,19 @@ export default (controls = true) => {
   ` : `
   class="film-card film-card--no-controls"
   `}>
-    <h3 class="film-card__title">Incredibles 2</h3>
-    <p class="film-card__rating">9.8</p>
+    <h3 class="film-card__title">${film.name}</h3>
+    <p class="film-card__rating">${film.rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">2018</span>
-      <span class="film-card__duration">1h&nbsp;13m</span>
-      <span class="film-card__genre">Comedy</span>
+      <span class="film-card__year">${film.year}</span>
+      <span class="film-card__duration">${film.duration}</span>
+      <span class="film-card__genre">${film.genre}</span>
     </p>
-    <img src="./images/posters/moonrise.jpg" alt="" class="film-card__poster">
+    <img src="${film.poster}" alt="" class="film-card__poster">
     ${controls ? `
       <p class="film-card__description">
-       A priests Romania and confront a malevolent force in the form of a demonic nun.</p>
+       ${film.descr}</p>
        ` : ``}
-    <button class="film-card__comments">13 comments</button>
+    <button class="film-card__comments">${film.comments} comments</button>
     ${controls ? `
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
