@@ -64,5 +64,4 @@ const getAllFilms = () => {
 
   return films;
 };
-
 export default getAllFilms;
