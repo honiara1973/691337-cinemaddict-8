@@ -1,4 +1,10 @@
-export default (film, controls = true) => {
+export default (template) => {
+  const newCard = document.createElement(`div`);
+  newCard.innerHTML = template;
+  return newCard.firstChild;
+};
+
+/* export default (film, controls = true) => {
   return `
   <article
   ${controls ? `
@@ -29,3 +35,4 @@ export default (film, controls = true) => {
   </article>
   `;
 };
+*/
