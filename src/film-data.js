@@ -48,6 +48,7 @@ const getAllFilms = () => {
       year,
       genre,
       duration,
+      age: getRandomElement([`5+`, `10+`, `18+`]),
       rating: getRandomFrac(5, 10),
       descr: textForDescr
       .split(`.`)

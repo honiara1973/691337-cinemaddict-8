@@ -8,10 +8,24 @@ class FilmCard {
     this._duration = data.duration;
     this._rating = data.rating;
     this._descr = data.descr;
-    this._comments = data.comments;
     this._poster = data.poster;
     this._element = null;
-    this._controls = true;
+    this._controls = false;
+    this._comments = data.comments;
+  }
+
+  _onCommentsButtonClick() {
+    if (typeof this._comments === `function`) {
+      this._comments();
+    }
+  }
+
+  set onComments(fn) {
+    this._comments = fn;
+  }
+
+  set hasControls(boolean) {
+    this._controls = boolean;
   }
 
   get template() {
@@ -46,9 +60,17 @@ class FilmCard {
     `.trim();
   }
 
-  render() {
+  render(boolean) {
+    this.hasControls = boolean;
     this._element = makeFilmCard(this.template);
+    this.bind();
     return this._element;
+  }
+
+  bind() {
+    this._element.querySelector(`.film-card__comments`)
+    .addEventListener(`click`, this._onCommentsButtonClick.bind(this));
+
   }
 }
 
