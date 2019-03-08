@@ -70,7 +70,6 @@ class FilmCard {
   bind() {
     this._element.querySelector(`.film-card__comments`)
     .addEventListener(`click`, this._onCommentsButtonClick.bind(this));
-
   }
 }
 

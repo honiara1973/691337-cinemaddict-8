@@ -52,21 +52,5 @@ filterContainer.addEventListener(`click`, () => {
     filmsListContainer.removeChild(filmsListContainer.firstChild);
   }
 
-  getFilmCards(filmsListContainer, getRandomInt(1, 10));
+  getFilmCards(filmsListContainer, getRandomInt(1, 10), true);
 });
-
-
-/* const addCards = (container, amount, controls) => {
-  getAllFilms()
-  .reduce((acc, it) => acc.length < amount ? [...acc,
-    container.insertAdjacentHTML(`beforeEnd`, makeCardElement(it, controls))] : acc, []);
-};
-*/
-
-/* const init = () => {
-  Filters.forEach((it) =>
-    filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(it, getRandomInt(1, 20))));
-  addCards(filmsListContainer, CARDS_AMOUNT_INITIAL);
-  filmsListExtras.forEach((it) => addCards(it, CARDS_AMOUNT_TOP, false));
-};
-*/

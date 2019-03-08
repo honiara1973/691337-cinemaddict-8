@@ -7,6 +7,7 @@ class FilmDetails {
     this._genre = data.genre;
     this._duration = data.duration;
     this._age = data.age;
+    this._country = data.country;
     this._rating = data.rating;
     this._descr = data.descr;
     this._comments = data.comments;
@@ -27,7 +28,7 @@ class FilmDetails {
   }
 
   get template() {
-    return `  
+    return `
   <section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__close">
@@ -68,28 +69,28 @@ class FilmDetails {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">15 June 2018 (USA)</td>
+            <td class="film-details__cell">${this._year}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">118 min</td>
+            <td class="film-details__cell">${this._duration}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
-            <td class="film-details__cell">USA</td>
+            <td class="film-details__cell">${this._country}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Genres</td>
             <td class="film-details__cell">
-              <span class="film-details__genre">Animation</span>
-              <span class="film-details__genre">Action</span>
-              <span class="film-details__genre">Adventure</span></td>
+            ${this._genre
+            .map((it) =>
+              `<span class="film-details__genre">${it}</span>`)
+            .join(``)}
+            </td>
           </tr>
         </table>
 
-        <p class="film-details__film-description">
-          The Incredibles hero family takes on a new mission, which involves a change in family roles:
-          Bob Parr (Mr Incredible) must manage the house while his wife Helen (Elastigirl) goes out to save the world.
+        <p class="film-details__film-description">${this._descr}
         </p>
       </div>
     </div>
@@ -155,7 +156,7 @@ class FilmDetails {
         </div>
 
         <section class="film-details__user-rating-inner">
-          <h3 class="film-details__user-rating-title">Incredibles 2</h3>
+          <h3 class="film-details__user-rating-title">${this._name}</h3>
 
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
