@@ -26,6 +26,7 @@ const renderFilmCard = (container, data, boolean) => {
   filmDetails.onClose = () => {
     document.body.removeChild(document.body.lastChild);
   };
+
 };
 
 const getFilmCards = (container, amount, boolean) => {
@@ -42,15 +43,21 @@ const init = () => {
     filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(it, getRandomInt(1, 20))));
   getFilmCards(filmsListContainer, CARDS_AMOUNT_INITIAL, true);
   filmsListExtras.forEach((it) => getFilmCards(it, CARDS_AMOUNT_TOP, false));
+
+  filterContainer.addEventListener(`click`, (evt) => {
+    const newFilter = evt.target;
+    const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
+    currentFilter.classList.remove(`main-navigation__item--active`);
+    newFilter.classList.add(`main-navigation__item--active`);
+
+    while (filmsListContainer.firstChild) {
+      filmsListContainer.removeChild(filmsListContainer.firstChild);
+    }
+
+    getFilmCards(filmsListContainer, getRandomInt(1, 10), true);
+  });
+
 };
 
 init();
 
-filterContainer.addEventListener(`click`, () => {
-
-  while (filmsListContainer.firstChild) {
-    filmsListContainer.removeChild(filmsListContainer.firstChild);
-  }
-
-  getFilmCards(filmsListContainer, getRandomInt(1, 10), true);
-});

@@ -12,6 +12,8 @@ class FilmCard {
     this._element = null;
     this._controls = false;
     this._comments = data.comments;
+
+    this._onCommentsButtonClick = this._onCommentsButtonClick.bind(this);
   }
 
   _onCommentsButtonClick() {
@@ -63,14 +65,15 @@ class FilmCard {
   render(boolean) {
     this.hasControls = boolean;
     this._element = makeFilmCard(this.template);
-    this.bind();
+    this.createListeners();
     return this._element;
   }
 
-  bind() {
+  createListeners() {
     this._element.querySelector(`.film-card__comments`)
-    .addEventListener(`click`, this._onCommentsButtonClick.bind(this));
+    .addEventListener(`click`, this._onCommentsButtonClick);
   }
+
 }
 
 export default FilmCard;
