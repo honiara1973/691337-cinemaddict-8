@@ -1,7 +1,8 @@
-import makeFilmCard from './make-card';
+import Component from './component';
 
-class FilmDetails {
+class FilmDetails extends Component {
   constructor(data) {
+    super();
     this._name = data.name;
     this._year = data.year;
     this._genre = data.genre;
@@ -12,9 +13,8 @@ class FilmDetails {
     this._descr = data.descr;
     this._comments = data.comments;
     this._poster = data.poster;
-    this._element = null;
-    this._controls = false;
     this._onClose = null;
+    this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
   _onCloseButtonClick() {
@@ -196,23 +196,12 @@ class FilmDetails {
 </section>`.trim();
   }
 
-  render() {
-    this._element = makeFilmCard(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  bind() {
+  createListeners() {
     this._element.querySelector(`.film-details__close-btn`)
-    .addEventListener(`click`, this._onCloseButtonClick.bind(this));
+    .addEventListener(`click`, this._onCloseButtonClick);
   }
 
-  unrender() {
-    this.unbind();
-    this._element = null;
-  }
-
-  unbind() {
+  removeListeners() {
     this._element.querySelector(`.film-details__close-btn`)
     .removeEventListener(`click`, this._onCloseButtonClick);
   }

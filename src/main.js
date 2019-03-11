@@ -25,6 +25,7 @@ const renderFilmCard = (container, data, boolean) => {
 
   filmDetails.onClose = () => {
     document.body.removeChild(document.body.lastChild);
+    filmDetails.unrender();
   };
 
 };
