@@ -1,7 +1,8 @@
-import makeFilmCard from './make-card';
+import Component from './component';
 
-class FilmCard {
+class FilmCard extends Component {
   constructor(data) {
+    super();
     this._name = data.name;
     this._year = data.year;
     this._genre = data.genre;
@@ -9,7 +10,6 @@ class FilmCard {
     this._rating = data.rating;
     this._descr = data.descr;
     this._poster = data.poster;
-    this._element = null;
     this._controls = false;
     this._comments = data.comments;
 
@@ -64,9 +64,7 @@ class FilmCard {
 
   render(boolean) {
     this.hasControls = boolean;
-    this._element = makeFilmCard(this.template);
-    this.createListeners();
-    return this._element;
+    return super.render();
   }
 
   createListeners() {
