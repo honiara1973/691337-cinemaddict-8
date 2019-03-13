@@ -4,15 +4,20 @@ class FilmDetails extends Component {
   constructor(data) {
     super();
     this._name = data.name;
-    this._year = data.year;
+    this._originalName = data.originalName;
+    this._releaseDate = data.releaseDate;
     this._genre = data.genre;
     this._duration = data.duration;
     this._age = data.age;
     this._country = data.country;
+    this._director = data.director;
+    this._writers = data.writers;
+    this._actors = data.actors;
     this._rating = data.rating;
     this._descr = data.descr;
     this._comments = data.comments;
     this._poster = data.poster;
+    this._ratingScores = data.ratingScores;
     this._onClose = null;
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
@@ -45,7 +50,7 @@ class FilmDetails extends Component {
         <div class="film-details__info-head">
           <div class="film-details__title-wrap">
             <h3 class="film-details__title">${this._name}</h3>
-            <p class="film-details__title-original">Original: ${this._name}</p>
+            <p class="film-details__title-original">Original: ${this._originalName}</p>
           </div>
 
           <div class="film-details__rating">
@@ -57,19 +62,19 @@ class FilmDetails extends Component {
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
-            <td class="film-details__cell">Brad Bird</td>
+            <td class="film-details__cell">${this._director}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">Brad Bird</td>
+            <td class="film-details__cell">${this._writers}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+            <td class="film-details__cell">${this._actors}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${this._year}</td>
+            <td class="film-details__cell">${this._releaseDate}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
@@ -161,34 +166,14 @@ class FilmDetails extends Component {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-            <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-            <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-            <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-            <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" checked>
-            <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-            <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-            <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-            <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
-            <label class="film-details__user-rating-label" for="rating-9">9</label>
-
+          ${this._ratingScores
+          .map((it) => `
+          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
+          value="${it}" id="rating-${it}">
+          <label class="film-details__user-rating-label" for="rating-${it}">${it}</label>
+         `).join(``)}
           </div>
+
         </section>
       </div>
     </section>

@@ -4,7 +4,7 @@ class FilmCard extends Component {
   constructor(data) {
     super();
     this._name = data.name;
-    this._year = data.year;
+    this._releaseDate = data.releaseDate;
     this._genre = data.genre;
     this._duration = data.duration;
     this._rating = data.rating;
@@ -41,7 +41,7 @@ class FilmCard extends Component {
       <h3 class="film-card__title">${this._name}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${this._year}</span>
+        <span class="film-card__year">${this._releaseDate}</span>
         <span class="film-card__duration">${this._duration}</span>
         <span class="film-card__genre">${this._genre}</span>
       </p>

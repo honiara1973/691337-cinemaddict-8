@@ -1,5 +1,7 @@
 import {getRandomFrac, compareRandom, getRandomInt, getRandomElement} from './utils';
 
+const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
+
 const Films = [
   [`Shindler's List`, `1993`, [`Epic drama`], `2h 00m`],
   [`The Matrix`, `1999`, [`Science fiction`], `2h 05m`],
@@ -40,16 +42,23 @@ Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.
 const getAllFilms = () => {
 
   const films = [];
+  // Вопрос наставнику: как присвоить свойству объекта значение другого свойства этого же объекта?
+  // пример с originalName, writers
 
   for (let el of Films) {
-    const [name, year, genre, duration] = el;
+    const [name, releaseDate, genre, duration] = el;
     const film = {
       name,
-      year,
+      originalName: name,
+      releaseDate,
       genre,
       duration,
       age: getRandomElement([`5+`, `10+`, `18+`]),
       country: getRandomElement([`USA`, `Canada`, `France`]),
+      director: getRandomElement([`Francis Ford Coppola`, `Quentin Tarantino`, `Martin Scorsese`]),
+      writers: getRandomElement([`Francis Ford Coppola`, `Quentin Tarantino`, `Martin Scorsese`]),
+      actors: getRandomElement([`Brad Pitt`, `Harrison Ford`, `Keanu Reeves`]),
+      ratingScores: RATING_SCORES,
       rating: getRandomFrac(5, 10),
       descr: textForDescr
       .split(`.`)
