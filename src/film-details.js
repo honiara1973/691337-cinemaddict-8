@@ -1,5 +1,7 @@
 import Component from './component';
 
+const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
+
 class FilmDetails extends Component {
   constructor(data) {
     super();
@@ -17,15 +19,36 @@ class FilmDetails extends Component {
     this._descr = data.descr;
     this._comments = data.comments;
     this._poster = data.poster;
-    this._ratingScores = data.ratingScores;
     this._onClose = null;
+    this._userComment = data.userComment;
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
-  _onCloseButtonClick() {
-    if (typeof this._onClose === `function`) {
-      this._onClose();
+  _processForm(formData) {
+    const entry = {
+      userComment: ``,
+    };
+
+    const filmDetailsMapper = FilmDetails.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      if (filmDetailsMapper[property]) {
+        filmDetailsMapper[property](value);
+      }
     }
+
+    return entry;
+  }
+
+  _onCloseButtonClick() {
+
+    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+    const newData = this._processForm(formData);
+    if (typeof this._onClose === `function`) {
+      this._onClose(newData);
+    }
+    this.update(newData);
   }
 
   set onClose(fn) {
@@ -112,7 +135,9 @@ class FilmDetails extends Component {
     </section>
 
     <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">1</span></h3>
+      <h3 class="film-details__comments-title">Comments
+      <span class="film-details__comments-count">${this._comments}</span>
+      </h3>
 
       <ul class="film-details__comments-list">
         <li class="film-details__comment">
@@ -144,7 +169,9 @@ class FilmDetails extends Component {
           </div>
         </div>
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
+          <textarea class="film-details__comment-input"
+          placeholder="← Select reaction, add comment here" name="comment">
+          ${this._userComment}</textarea>
         </label>
       </div>
     </section>
@@ -166,7 +193,7 @@ class FilmDetails extends Component {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-          ${this._ratingScores
+          ${RATING_SCORES
           .map((it) => `
           <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
           value="${it}" id="rating-${it}">
@@ -190,6 +217,17 @@ class FilmDetails extends Component {
     this._element.querySelector(`.film-details__close-btn`)
     .removeEventListener(`click`, this._onCloseButtonClick);
   }
+
+  update(data) {
+    this._userComment = data.userComment;
+  }
+
+  static createMapper(target) {
+    return {
+      comment: (value) => (target.userComment = value),
+    };
+  }
+
 }
 
 export default FilmDetails;
