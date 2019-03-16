@@ -1,4 +1,5 @@
 import Component from './component';
+import * as moment from 'moment';
 
 const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
 
@@ -17,16 +18,28 @@ class FilmDetails extends Component {
     this._actors = data.actors;
     this._rating = data.rating;
     this._descr = data.descr;
+    this._commentsCounter = data.commentsCounter;
     this._comments = data.comments;
     this._poster = data.poster;
     this._onClose = null;
     this._userComment = data.userComment;
+    this._userScore = data.userScore;
+
+    this._scoreChecked = this._userScore !== `` ? this._userScore :
+      String(Math.floor(this._rating));
+
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
   _processForm(formData) {
     const entry = {
-      userComment: ``,
+      userComment: {
+        text: ``,
+        author: this._userComment.author,
+        day: this._userComment.day,
+      },
+
+      userScore: ``,
     };
 
     const filmDetailsMapper = FilmDetails.createMapper(entry);
@@ -41,14 +54,23 @@ class FilmDetails extends Component {
     return entry;
   }
 
+  _onVoting(evt) {
+    this._userScore = evt.target.value;
+  }
+
   _onCloseButtonClick() {
 
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const newData = this._processForm(formData);
+
+    newData[`commentsCounter`] = newData.userComment.text.length > 0 ?
+      this._commentsCounter += 1 : this._commentsCounter;
+
     if (typeof this._onClose === `function`) {
       this._onClose(newData);
     }
     this.update(newData);
+
   }
 
   set onClose(fn) {
@@ -78,7 +100,7 @@ class FilmDetails extends Component {
 
           <div class="film-details__rating">
             <p class="film-details__total-rating">${this._rating}</p>
-            <p class="film-details__user-rating">Your rate 8</p>
+            <p class="film-details__user-rating">Your rate ${this._userScore}</p>
           </div>
         </div>
 
@@ -97,11 +119,12 @@ class FilmDetails extends Component {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${this._releaseDate}</td>
+            <td class="film-details__cell">
+            ${moment(this._releaseDate).format(`DD MMMM YYYY`)}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${this._duration}</td>
+            <td class="film-details__cell">${this._duration} min</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
@@ -136,17 +159,18 @@ class FilmDetails extends Component {
 
     <section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">Comments
-      <span class="film-details__comments-count">${this._comments}</span>
+      <span class="film-details__comments-count">${this._commentsCounter}</span>
       </h3>
 
       <ul class="film-details__comments-list">
         <li class="film-details__comment">
           <span class="film-details__comment-emoji">😴</span>
           <div>
-            <p class="film-details__comment-text">So long-long story, boring!</p>
+            <p class="film-details__comment-text">${this._comments.text}</p>
             <p class="film-details__comment-info">
-              <span class="film-details__comment-author">Tim Macoveev</span>
-              <span class="film-details__comment-day">3 days ago</span>
+              <span class="film-details__comment-author">${this._comments.author}</span>
+              <span class="film-details__comment-day">
+              ${moment(this._comments.day).startOf(`hour`).fromNow()}</span>
             </p>
           </div>
         </li>
@@ -170,8 +194,7 @@ class FilmDetails extends Component {
         </div>
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input"
-          placeholder="← Select reaction, add comment here" name="comment">
-          ${this._userComment}</textarea>
+          placeholder="← Select reaction, add comment here" name="comment"></textarea>
         </label>
       </div>
     </section>
@@ -196,7 +219,8 @@ class FilmDetails extends Component {
           ${RATING_SCORES
           .map((it) => `
           <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
-          value="${it}" id="rating-${it}">
+          value="${it}" id="rating-${it}"
+          ${it === this._scoreChecked ? `checked` : ``}>
           <label class="film-details__user-rating-label" for="rating-${it}">${it}</label>
          `).join(``)}
           </div>
@@ -211,20 +235,28 @@ class FilmDetails extends Component {
   createListeners() {
     this._element.querySelector(`.film-details__close-btn`)
     .addEventListener(`click`, this._onCloseButtonClick);
+    this._element.querySelector(`.film-details__user-rating-score`)
+    .addEventListener(`click`, this._onVoting);
   }
 
   removeListeners() {
     this._element.querySelector(`.film-details__close-btn`)
     .removeEventListener(`click`, this._onCloseButtonClick);
+    this._element.querySelector(`.film-details__user-rating-score`)
+    .removeEventListener(`click`, this._onVoting);
   }
 
   update(data) {
-    this._userComment = data.userComment;
+    this._comments = data.userComment.text.length > 0 ? data.userComment : this._comments;
+    this._userScore = data.userScore;
+    this._scoreChecked = this._userScore;
+    this._commentsCounter = data.commentsCounter;
   }
 
   static createMapper(target) {
     return {
-      comment: (value) => (target.userComment = value),
+      comment: (value) => (target.userComment.text = value),
+      score: (value) => (target.userScore = value),
     };
   }
 

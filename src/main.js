@@ -25,6 +25,8 @@ const renderFilmCard = (container, data, boolean) => {
 
   filmDetails.onClose = (newObject) => {
     data.userComment = newObject.userComment;
+    data.commentsCounter = newObject.commentsCounter;
+    film.partialUpdate(data);
     document.body.removeChild(document.body.lastChild);
     filmDetails.unrender();
   };

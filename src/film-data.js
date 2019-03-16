@@ -1,21 +1,23 @@
 import {getRandomFrac, compareRandom, getRandomInt, getRandomElement} from './utils';
 
+const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
+
 const Films = [
-  [`Shindler's List`, `1993`, [`Epic drama`], `2h 00m`],
-  [`The Matrix`, `1999`, [`Science fiction`], `2h 05m`],
-  [`The Dark Knight`, `2008`, [`Superhero`], `2h 10m`],
-  [`Titanic`, `1997`, [`Disaster drama`], `2h 15m`],
-  [`Jurassic Park`, `1993`, [`Fiction`, `Adventure`], `2h 20m`],
-  [`Gladiator`, `2000`, [`Historical drama`], `2h 25m`],
-  [`Star Wars`, `1977`, [`Epic space`, `Opera`], `2h 30m`],
-  [`The Shawshank Redemption`, `1994`, [`Drama`], `2h 35m`],
-  [`The Godfather`, `1972`, [`Crime`], `2h 40m`],
-  [`Back to the Future`, `1985`, [`Comic`, `Science fiction`], `2h 45m`],
-  [`The Silence of the Lambs`, `1991`, [`Thriller`], `2h 50m`],
-  [`Casablanca`, `1942`, [`Drama`], `2h 55m`],
-  [`Psycho`, `1960`, [`Horror`], `3h 00m`],
-  [`The Green Mile`, `1999`, [`Fantasy`, `drama`], `3h 05m`],
-  [`Alien`, `1979`, [`Horror`], `3h 10m`]
+  [`Shindler's List`, `1993-01-01`, [`Epic drama`]],
+  [`The Matrix`, `1999-02-02`, [`Science fiction`]],
+  [`The Dark Knight`, `2008-03-03`, [`Superhero`]],
+  [`Titanic`, `1997-04-04`, [`Disaster drama`]],
+  [`Jurassic Park`, `1993-05-05`, [`Fiction`, `Adventure`]],
+  [`Gladiator`, `2000-06-06`, [`Historical drama`]],
+  [`Star Wars`, `1977-07-07`, [`Epic space`, `Opera`]],
+  [`The Shawshank Redemption`, `1994-08-08`, [`Drama`]],
+  [`The Godfather`, `1972-09-09`, [`Crime`], `2h 40m`],
+  [`Back to the Future`, `1985-10-10`, [`Comic`, `Science fiction`]],
+  [`The Silence of the Lambs`, `1991-11-11`, [`Thriller`]],
+  [`Casablanca`, `1942-12-12`, [`Drama`]],
+  [`Psycho`, `1960-01-01`, [`Horror`]],
+  [`The Green Mile`, `1999-02-02`, [`Fantasy`, `drama`]],
+  [`Alien`, `1979-03-03`, [`Horror`]]
 ];
 
 const Directors = [`Francis Ford Coppola`, `Quentin Tarantino`, `Martin Scorsese`];
@@ -27,6 +29,9 @@ const Posters = [
   `./images/posters/blue-blazes.jpg`,
   `./images/posters/fuga-da-new-york.jpg`,
   `./images/posters/three-friends.jpg`];
+
+const Comments = [`So long-long story, boring!`, `It was very exciting movie`,
+  `My children were chocked by this movie`];
 
 const textForDescr = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
@@ -44,13 +49,14 @@ const getAllFilms = () => {
   const films = [];
 
   for (let el of Films) {
-    const [name, releaseDate, genre, duration] = el;
+    const [name, releaseDate, genre] = el;
+
     const film = {
       name,
       originalName: name,
       releaseDate,
       genre,
-      duration,
+      duration: getRandomInt(120, 240),
       age: getRandomElement([`5+`, `10+`, `18+`]),
       country: getRandomElement([`USA`, `Canada`, `France`]),
 
@@ -65,10 +71,23 @@ const getAllFilms = () => {
       .sort(compareRandom)
       .slice(0, getRandomInt(0, 3))
       .join(`.`),
-      comments: getRandomInt(0, 100),
+      comments: {
+        text: getRandomElement(Comments),
+        author: getRandomElement([`John Smith`, `Tony Williams`, `Alex Brown`]),
+        day: new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now())),
+      },
+      commentsCounter: getRandomInt(0, 100),
       poster: getRandomElement(Posters),
-      userComment: ``,
+
+      userComment: {
+        text: ``,
+        author: `You`,
+        day: new Date(),
+      },
+
+      userScore: ``,
     };
+
     films.push(film);
   }
 
