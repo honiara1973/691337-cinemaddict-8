@@ -23,7 +23,10 @@ const renderFilmCard = (container, data, boolean) => {
     document.body.appendChild(filmDetails.render());
   };
 
-  filmDetails.onClose = () => {
+  filmDetails.onClose = (newObject) => {
+    data.userComment = newObject.userComment;
+    data.commentsCounter = newObject.commentsCounter;
+    film.partialUpdate(data);
     document.body.removeChild(document.body.lastChild);
     filmDetails.unrender();
   };
