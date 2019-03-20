@@ -13,9 +13,9 @@ class FilmCard extends Component {
     this._rating = data.rating;
     this._descr = data.descr;
     this._poster = data.poster;
-    this._controls = false;
     this._commentsCounter = data.commentsCounter;
     this._state = {
+      onControls: false,
       isWatched: false,
       inWatchList: false,
       isFavorite: false,
@@ -66,13 +66,13 @@ class FilmCard extends Component {
   }
 
   set hasControls(boolean) {
-    this._controls = boolean;
+    this._state.onControls = boolean;
   }
 
   get template() {
     return `
     <article
-     ${this._controls ?
+     ${this._state.onControls ?
     `class="film-card"
     ` : `
     class="film-card film-card--no-controls"
@@ -90,12 +90,12 @@ class FilmCard extends Component {
         .join(``)}
       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
-      ${this._controls ? `
+      ${this._state.onControls ? `
         <p class="film-card__description">
          ${this._descr}</p>
          ` : ``}
       <button class="film-card__comments">${this._commentsCounter} comments</button>
-      ${this._controls ? `
+      ${this._state.onControls ? `
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">
         Add to watchlist</button>
@@ -123,7 +123,7 @@ class FilmCard extends Component {
     this._element.querySelector(`.film-card__comments`)
     .addEventListener(`click`, this._onCommentsButtonClick);
 
-    if (this._controls) {
+    if (this._state.onControls) {
       this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
     .addEventListener(`click`, this._onAddToWatchList);
       this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
@@ -132,6 +132,7 @@ class FilmCard extends Component {
     .addEventListener(`click`, this._onAddToFavorite);
     }
   }
+
 
 }
 
