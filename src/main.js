@@ -1,17 +1,25 @@
-import makeFilterElement from './make-filter';
+// import makeFilterElement from './make-filter';
+import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
+import getAllFilters from './filter-data';
 import getAllFilms from './film-data';
-import {getRandomInt} from './utils';
+// import {getRandomInt} from './utils';
 
 const CARDS_AMOUNT_INITIAL = 7;
 const CARDS_AMOUNT_TOP = 2;
 
-const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
+// const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
 const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
+
+const renderFilter = (data) => {
+  const filter = new Filter(data);
+
+  filterContainer.appendChild(filter.render());
+};
 
 const renderFilmCard = (container, data, boolean) => {
   const film = new FilmCard(data);
@@ -33,9 +41,14 @@ const renderFilmCard = (container, data, boolean) => {
 
 };
 
+const createFilterElements = () => {
+  getAllFilters()
+  .forEach((it) => renderFilter(it));
+};
+
 const getFilmCards = (container, amount, boolean) => {
-  getAllFilms().
-  forEach((it, i) => {
+  getAllFilms()
+  .forEach((it, i) => {
     if (i < amount) {
       renderFilmCard(container, it, boolean);
     }
@@ -43,12 +56,13 @@ const getFilmCards = (container, amount, boolean) => {
 };
 
 const init = () => {
-  Filters.forEach((it) =>
-    filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(it, getRandomInt(1, 20))));
+  createFilterElements();
+  /* Filters.forEach((it) =>
+    filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(it, getRandomInt(1, 20))));*/
   getFilmCards(filmsListContainer, CARDS_AMOUNT_INITIAL, true);
   filmsListExtras.forEach((it) => getFilmCards(it, CARDS_AMOUNT_TOP, false));
 
-  filterContainer.addEventListener(`click`, (evt) => {
+  /* filterContainer.addEventListener(`click`, (evt) => {
     const newFilter = evt.target;
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
@@ -60,7 +74,7 @@ const init = () => {
 
     getFilmCards(filmsListContainer, getRandomInt(1, 10), true);
   });
-
+*/
 };
 
 init();

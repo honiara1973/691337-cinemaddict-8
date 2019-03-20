@@ -10,6 +10,8 @@ class Filter extends Component {
     this._state = {
       isActive: false,
     };
+    this._onFilter = null;
+    this._onFilterClick = this._onFilterClick.bind(this);
   }
 
   _captionToHref() {
@@ -17,10 +19,20 @@ class Filter extends Component {
       .split(` `)[0];
   }
 
+  _onFilterClick() {
+    if (typeof this._onFilter === `function`) {
+      this._onFilter();
+    }
+  }
+
+  set onFilter(fn) {
+    this._onFilter = fn;
+  }
+
   get template() {
     return `
-      <a href="#${this._captionToHref()}" 
-      class="main-navigation__item 
+      <a href="#${this._captionToHref()}"
+      class="main-navigation__item
     ${this._state.isActive ? `main-navigation__item--active` : ``}
     ${this._isAdditional ? `main-navigation__item--additional` : ``}
     ">
@@ -31,6 +43,17 @@ class Filter extends Component {
     `.trim();
   }
 
+  /*
+  createListeners() {
+   this._element.querySelector(`.main-navigation__item`)
+    .addEventListener(`click`, this._onFilterClick);
+  }
+
+  removeListeners() {
+    this._element.querySelector(`.main-navigation__item`)
+    .removeEventListener(`click`, this._onFilterClick);
+  }
+*/
 }
 
 export default Filter;
