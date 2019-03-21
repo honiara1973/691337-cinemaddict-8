@@ -7,9 +7,7 @@ class Filter extends Component {
     this._hasCounter = data.hasCounter;
     this._isAdditional = data.isAdditional;
     this._counter = data.counter;
-    this._state = {
-      isActive: false,
-    };
+    this._isActive = data.isActive;
     this._onFilter = null;
     this._onFilterClick = this._onFilterClick.bind(this);
   }
@@ -19,7 +17,8 @@ class Filter extends Component {
       .split(` `)[0];
   }
 
-  _onFilterClick() {
+  _onFilterClick(evt) {
+    evt.preventDefault();
     if (typeof this._onFilter === `function`) {
       this._onFilter();
     }
@@ -31,9 +30,9 @@ class Filter extends Component {
 
   get template() {
     return `
-      <a href="#${this._captionToHref()}"
+      <a href="${this._captionToHref()}" 
       class="main-navigation__item
-    ${this._state.isActive ? `main-navigation__item--active` : ``}
+    ${this._isActive ? `main-navigation__item--active` : ``}  
     ${this._isAdditional ? `main-navigation__item--additional` : ``}
     ">
     ${this._caption}
@@ -43,9 +42,8 @@ class Filter extends Component {
     `.trim();
   }
 
-  /*
   createListeners() {
-   this._element.querySelector(`.main-navigation__item`)
+    this._element.querySelector(`.main-navigation__item`)
     .addEventListener(`click`, this._onFilterClick);
   }
 
@@ -53,7 +51,7 @@ class Filter extends Component {
     this._element.querySelector(`.main-navigation__item`)
     .removeEventListener(`click`, this._onFilterClick);
   }
-*/
+
 }
 
 export default Filter;

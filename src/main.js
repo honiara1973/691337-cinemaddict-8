@@ -4,10 +4,12 @@ import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import getAllFilters from './filter-data';
 import getAllFilms from './film-data';
-// import {getRandomInt} from './utils';
+import {getRandomInt} from './utils';
 
 const CARDS_AMOUNT_INITIAL = 7;
 const CARDS_AMOUNT_TOP = 2;
+const allFilms = getAllFilms();
+const allFilters = getAllFilters();
 
 // const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
@@ -19,6 +21,14 @@ const renderFilter = (data) => {
   const filter = new Filter(data);
 
   filterContainer.appendChild(filter.render());
+
+  filter.onFilter = () => {
+    while (filmsListContainer.firstChild) {
+      filmsListContainer.removeChild(filmsListContainer.firstChild);
+    }
+    getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
+  };
+
 };
 
 const renderFilmCard = (container, data, boolean) => {
@@ -42,12 +52,12 @@ const renderFilmCard = (container, data, boolean) => {
 };
 
 const createFilterElements = () => {
-  getAllFilters()
+  allFilters
   .forEach((it) => renderFilter(it));
 };
 
 const getFilmCards = (container, amount, boolean) => {
-  getAllFilms()
+  allFilms
   .forEach((it, i) => {
     if (i < amount) {
       renderFilmCard(container, it, boolean);
@@ -57,25 +67,27 @@ const getFilmCards = (container, amount, boolean) => {
 
 const init = () => {
   createFilterElements();
-  /* Filters.forEach((it) =>
-    filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(it, getRandomInt(1, 20))));*/
+  console.log(filterContainer.children);
+  console.log(filterContainer.firstChild);
+  console.log(getAllFilters());
+
   getFilmCards(filmsListContainer, CARDS_AMOUNT_INITIAL, true);
   filmsListExtras.forEach((it) => getFilmCards(it, CARDS_AMOUNT_TOP, false));
 
-  /* filterContainer.addEventListener(`click`, (evt) => {
+  /*filterContainer.addEventListener(`click`, (evt) => {
     const newFilter = evt.target;
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
-    newFilter.classList.add(`main-navigation__item--active`);
+    newFilter.classList.add((`main-navigation__item--active`));
 
+    console.log(newFilter);
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
-
-    getFilmCards(filmsListContainer, getRandomInt(1, 10), true);
+    getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
   });
-*/
+  */
+
 };
 
 init();
-
