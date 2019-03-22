@@ -30,9 +30,9 @@ class Filter extends Component {
 
   get template() {
     return `
-      <a href="${this._captionToHref()}" 
+      <a href="${this._captionToHref()}"
       class="main-navigation__item
-    ${this._isActive ? `main-navigation__item--active` : ``}  
+    ${this._isActive ? `main-navigation__item--active` : ``}
     ${this._isAdditional ? `main-navigation__item--additional` : ``}
     ">
     ${this._caption}
@@ -42,16 +42,17 @@ class Filter extends Component {
     `.trim();
   }
 
+  /*
   createListeners() {
-    this._element.querySelector(`.main-navigation__item`)
+    document.querySelector(`.main-navigation__item`)
     .addEventListener(`click`, this._onFilterClick);
   }
 
   removeListeners() {
-    this._element.querySelector(`.main-navigation__item`)
+    document.querySelector(`.main-navigation__item`)
     .removeEventListener(`click`, this._onFilterClick);
   }
-
+*/
 }
 
 export default Filter;

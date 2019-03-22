@@ -4,10 +4,10 @@ import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import getAllFilters from './filter-data';
 import getAllFilms from './film-data';
-import {getRandomInt} from './utils';
+// import {getRandomInt} from './utils';
 
-const CARDS_AMOUNT_INITIAL = 7;
-const CARDS_AMOUNT_TOP = 2;
+// const CARDS_AMOUNT_INITIAL = 7;
+// const CARDS_AMOUNT_TOP = 2;
 const allFilms = getAllFilms();
 const allFilters = getAllFilters();
 
@@ -22,13 +22,14 @@ const renderFilter = (data) => {
 
   filterContainer.appendChild(filter.render());
 
+  /*
   filter.onFilter = () => {
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
     getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
   };
-
+*/
 };
 
 const renderFilmCard = (container, data, boolean) => {
@@ -39,6 +40,16 @@ const renderFilmCard = (container, data, boolean) => {
 
   film.onComments = () => {
     document.body.appendChild(filmDetails.render());
+  };
+
+  film.onAddToWatchList = (newObject) => {
+    data.state.inWatchList = newObject.state.inWatchList;
+    console.log(data.state.inWatchList);
+  };
+
+  film.onMarkAsWatched = (newObject) => {
+    data.state.isWatched = newObject.state.isWatched;
+    console.log(data.state.isWatched);
   };
 
   filmDetails.onClose = (newObject) => {
@@ -56,37 +67,71 @@ const createFilterElements = () => {
   .forEach((it) => renderFilter(it));
 };
 
-const getFilmCards = (container, amount, boolean) => {
-  allFilms
-  .forEach((it, i) => {
-    if (i < amount) {
-      renderFilmCard(container, it, boolean);
+const getFilmCards = (container, filmsList, boolean) => {
+  filmsList.forEach((it) => renderFilmCard(container, it, boolean));
+};
+
+const getEventFilter = (evt) => {
+  const filterCaptions = {
+    all: document.querySelector(`a[href=all]`),
+    watchlist: document.querySelector(`a[href=watchlist]`),
+    history: document.querySelector(`a[href=history]`),
+    favorites: document.querySelector(`a[href=favorites]`),
+  };
+
+  let filterCaption;
+
+  for (let prop in filterCaptions) {
+    if (evt.target === filterCaptions[prop]) {
+      filterCaption = prop;
     }
-  });
+  }
+  return filterCaption;
+};
+
+const filterFilms = (films, filterName) => {
+
+  switch (filterName) {
+    case `all`:
+      return allFilms;
+
+    case `watchlist`:
+      return allFilms.filter((it) => it.state.inWatchList === true);
+
+    case `history`:
+      return allFilms.filter((it) => it.state.isWatched === true);
+
+    case `favorites`:
+      return allFilms.filter((it) => it.rating > 8);
+
+    default:
+      return [];
+  }
 };
 
 const init = () => {
   createFilterElements();
-  console.log(filterContainer.children);
-  console.log(filterContainer.firstChild);
-  console.log(getAllFilters());
 
-  getFilmCards(filmsListContainer, CARDS_AMOUNT_INITIAL, true);
-  filmsListExtras.forEach((it) => getFilmCards(it, CARDS_AMOUNT_TOP, false));
+  getFilmCards(filmsListContainer, allFilms.slice(0, 6), true);
+  filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
 
-  /*filterContainer.addEventListener(`click`, (evt) => {
+  filterContainer.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
     const newFilter = evt.target;
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
     newFilter.classList.add((`main-navigation__item--active`));
 
-    console.log(newFilter);
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
-    getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
+
+    const filterCaption = getEventFilter(evt);
+    const filteredFilms = filterFilms(allFilms, filterCaption);
+    getFilmCards(filmsListContainer, filteredFilms, true);
+
+    // getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
   });
-  */
 
 };
 

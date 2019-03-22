@@ -86,6 +86,12 @@ const getAllFilms = () => {
       },
 
       userScore: ``,
+
+      state: {
+        isWatched: false,
+        inWatchList: false,
+        isFavorite: false,
+      },
     };
 
     films.push(film);
