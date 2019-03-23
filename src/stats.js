@@ -11,7 +11,7 @@ class Stats extends Component {
 
   get template() {
     return `
-    <section class="statistic">
+    <section class="statistic visually-hidden">
     <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
 
     <ul class="statistic__text-list">

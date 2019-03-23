@@ -6,8 +6,7 @@ class StatsFilter extends Component {
   }
 
   get template() {
-    return `
-      <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters visually-hidden">
+    return `<form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
@@ -24,8 +23,7 @@ class StatsFilter extends Component {
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
       <label for="statistic-year" class="statistic__filters-label">Year</label>
-    </form>
-`.trim();
+    </form>`.trim();
   }
 }
 

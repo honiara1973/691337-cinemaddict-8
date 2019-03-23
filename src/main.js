@@ -6,6 +6,7 @@ import getAllFilters from './filter-data';
 import getAllFilms from './film-data';
 import Stats from './stats';
 import statsData from './stats-data';
+import StatsFilter from './stats-filter';
 // import {getRandomInt} from './utils';
 
 // const CARDS_AMOUNT_INITIAL = 7;
@@ -16,6 +17,8 @@ const allFilters = getAllFilters();
 
 // const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
+const mainContainer = document.querySelector(`.main`);
+const filmsContainer = document.querySelector(`.films`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
@@ -29,21 +32,19 @@ const renderFilter = (data) => {
   const filter = new Filter(data);
 
   filterContainer.appendChild(filter.render());
-
-  /*
-  filter.onFilter = () => {
-    while (filmsListContainer.firstChild) {
-      filmsListContainer.removeChild(filmsListContainer.firstChild);
-    }
-    getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
-  };
-*/
 };
 
 const renderStats = (data) => {
   const stats = new Stats(data);
 
-  filmsListContainer.appendChild(stats.render());
+  mainContainer.appendChild(stats.render());
+  const statsContainer = document.querySelector(`.statistic`);
+  const statsTextList = statsContainer.querySelector(`.statistic__text-list`);
+  statsContainer.classList.remove(`visually-hidden`);
+
+  const statsFilter = new StatsFilter();
+  statsContainer.insertBefore(statsFilter.render(), statsTextList);
+
 };
 
 const renderFilmCard = (container, data, boolean) => {
@@ -58,7 +59,6 @@ const renderFilmCard = (container, data, boolean) => {
 
   film.onAddToWatchList = (newObject) => {
     data.state.inWatchList = newObject.state.inWatchList;
-    console.log(data.state.inWatchList);
   };
 
   film.onMarkAsWatched = (newObject) => {
@@ -76,7 +76,6 @@ const renderFilmCard = (container, data, boolean) => {
 
   film.onAddToFavorite = (newObject) => {
     data.state.isFavorite = newObject.state.isFavorite;
-    console.log(data.state.isFavorite);
   };
 
   filmDetails.onClose = (newObject) => {
@@ -139,7 +138,6 @@ const filterFilms = (films, filterName) => {
 
 const init = () => {
   createFilterElements();
-  // renderStats(statsData);
 
   getFilmCards(filmsListContainer, allFilms.slice(0, 6), true);
   filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
@@ -147,7 +145,6 @@ const init = () => {
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     const newFilter = evt.target;
-    console.log(newFilter);
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
     newFilter.classList.add((`main-navigation__item--active`));
@@ -156,9 +153,19 @@ const init = () => {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
 
+    const statsContainer = document.querySelector(`.statistic`);
+    if (statsContainer) {
+      mainContainer.removeChild(mainContainer.lastChild);
+    }
+
+    if (filmsContainer.classList.contains(`visually-hidden`)) {
+      filmsContainer.classList.remove(`visually-hidden`);
+    }
+
     const filterCaption = getEventFilter(evt);
 
     if (filterCaption === `stats`) {
+      filmsContainer.classList.add(`visually-hidden`);
       renderStats(statsData);
     }
 
