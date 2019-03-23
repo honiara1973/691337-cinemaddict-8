@@ -70,6 +70,12 @@ class FilmCard extends Component {
   _onAddToFavorite(evt) {
     evt.preventDefault();
     this._state.isFavorite = !this._state.isFavorite;
+    const newData = this._processControls();
+    if (typeof this._onAddToFavorite === `function`) {
+      this._onAddToFavorite(newData);
+    }
+    this.update(newData);
+
   }
 
   set onComments(fn) {

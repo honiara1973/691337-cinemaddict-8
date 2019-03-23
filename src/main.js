@@ -10,15 +10,20 @@ import statsData from './stats-data';
 
 // const CARDS_AMOUNT_INITIAL = 7;
 // const CARDS_AMOUNT_TOP = 2;
+const MIN_IN_HOUR = 60;
 const allFilms = getAllFilms();
 const allFilters = getAllFilters();
 
 // const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
-const mainContainer = document.querySelector(`.films`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
+
+const Counters = {
+  isWatched: 0,
+  totalDuration: 0,
+};
 
 const renderFilter = (data) => {
   const filter = new Filter(data);
@@ -58,7 +63,20 @@ const renderFilmCard = (container, data, boolean) => {
 
   film.onMarkAsWatched = (newObject) => {
     data.state.isWatched = newObject.state.isWatched;
+    Counters.isWatched = allFilms.reduce((acc, it) => it.state.isWatched === true ?
+      acc + 1 : acc, 0);
+    Counters.totalDuration = allFilms.reduce((acc, it) => it.state.isWatched === true ?
+      acc + it.duration : acc, 0);
+    statsData.isWatchedCounter = Counters.isWatched;
+    statsData.totalDuration.hours = Math.floor(Counters.totalDuration / MIN_IN_HOUR);
+    statsData.totalDuration.min = Counters.totalDuration % MIN_IN_HOUR;
     console.log(data.state.isWatched);
+    console.log(Counters.totalDuration);
+  };
+
+  film.onAddToFavorite = (newObject) => {
+    data.state.isFavorite = newObject.state.isFavorite;
+    console.log(data.state.isFavorite);
   };
 
   filmDetails.onClose = (newObject) => {
@@ -112,7 +130,7 @@ const filterFilms = (films, filterName) => {
       return allFilms.filter((it) => it.state.isWatched === true);
 
     case `favorites`:
-      return allFilms.filter((it) => it.rating > 8);
+      return allFilms.filter((it) => it.state.isFavorite === true);
 
     default:
       return [];
