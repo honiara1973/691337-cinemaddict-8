@@ -1,11 +1,11 @@
 import {getRandomInt} from './utils';
 
 const Filters = [
-  [`All movies`, false, false, true],
-  [`Watchlist`, true, false],
-  [`History`, true, false],
-  [`Favorites`, true, false],
-  [`Stats`, false, true]
+  [`All movies`, false, true],
+  [`Watchlist`, true],
+  [`History`, true],
+  [`Favorites`, true],
+  [`Stats`, false, false, true]
 ];
 
 const getAllFilters = () => {
@@ -13,13 +13,13 @@ const getAllFilters = () => {
   const filters = [];
 
   for (let el of Filters) {
-    const [caption, hasCounter, isAdditional, isActive = false] = el;
+    const [caption, hasCounter, isActive = false, isAdditional = false] = el;
 
     const filter = {
       caption,
       hasCounter,
-      isAdditional,
       isActive,
+      isAdditional,
       counter: getRandomInt(1, 40),
     };
 

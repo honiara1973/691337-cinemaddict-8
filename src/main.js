@@ -4,6 +4,8 @@ import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import getAllFilters from './filter-data';
 import getAllFilms from './film-data';
+import Stats from './stats';
+import statsData from './stats-data';
 // import {getRandomInt} from './utils';
 
 // const CARDS_AMOUNT_INITIAL = 7;
@@ -13,6 +15,7 @@ const allFilters = getAllFilters();
 
 // const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
+const mainContainer = document.querySelector(`.films`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
@@ -30,6 +33,12 @@ const renderFilter = (data) => {
     getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
   };
 */
+};
+
+const renderStats = (data) => {
+  const stats = new Stats(data);
+
+  filmsListContainer.appendChild(stats.render());
 };
 
 const renderFilmCard = (container, data, boolean) => {
@@ -77,6 +86,7 @@ const getEventFilter = (evt) => {
     watchlist: document.querySelector(`a[href=watchlist]`),
     history: document.querySelector(`a[href=history]`),
     favorites: document.querySelector(`a[href=favorites]`),
+    stats: document.querySelector(`a[href=stats]`),
   };
 
   let filterCaption;
@@ -111,6 +121,7 @@ const filterFilms = (films, filterName) => {
 
 const init = () => {
   createFilterElements();
+  // renderStats(statsData);
 
   getFilmCards(filmsListContainer, allFilms.slice(0, 6), true);
   filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
@@ -118,6 +129,7 @@ const init = () => {
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     const newFilter = evt.target;
+    console.log(newFilter);
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
     newFilter.classList.add((`main-navigation__item--active`));
@@ -127,6 +139,11 @@ const init = () => {
     }
 
     const filterCaption = getEventFilter(evt);
+
+    if (filterCaption === `stats`) {
+      renderStats(statsData);
+    }
+
     const filteredFilms = filterFilms(allFilms, filterCaption);
     getFilmCards(filmsListContainer, filteredFilms, true);
 

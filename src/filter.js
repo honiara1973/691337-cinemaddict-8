@@ -34,7 +34,7 @@ class Filter extends Component {
       class="main-navigation__item
     ${this._isActive ? `main-navigation__item--active` : ``}
     ${this._isAdditional ? `main-navigation__item--additional` : ``}
-    ">
+  ">
     ${this._caption}
     ${this._hasCounter ?
     `<span class="main-navigation__item-count">${this._counter}</span>` : ``}
