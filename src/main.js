@@ -154,6 +154,7 @@ const renderFilmCard = (container, data, boolean) => {
       return Counters.genresWatched[genre];
     };
 
+    /*
     Counters.genresWatched[`Sci-Fi`] = filmsWatched.reduce((acc, it) => it.genre === `Sci-Fi` ?
       acc + 1 : acc, 0);
     Counters.genresWatched.Animation = filmsWatched.reduce((acc, it) => it.genre === `Animation` ?
@@ -164,6 +165,8 @@ const renderFilmCard = (container, data, boolean) => {
       acc + 1 : acc, 0);
     Counters.genresWatched[`TV Series`] = filmsWatched.reduce((acc, it) => it.genre === `TV Series` ?
       acc + 1 : acc, 0);
+*/
+    Object.keys(Counters.genresWatched).forEach((it) => countFilmGenres(it));
 
     statsData.genresWatched = Counters.genresWatched;
 
