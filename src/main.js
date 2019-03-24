@@ -28,6 +28,15 @@ const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films
 const Counters = {
   isWatched: 0,
   totalDuration: 0,
+
+  genresWatched: {
+    'Sci-Fi': 0,
+    'Animation': 0,
+    'Fantasy': 0,
+    'Comedy': 0,
+    'TV Series': 0,
+  },
+
 };
 
 const renderFilter = (data) => {
@@ -57,7 +66,9 @@ const renderStats = (data) => {
     data: {
       labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
       datasets: [{
-        data: [11, 8, 7, 4, 3],
+        data: [Counters.genresWatched[`Sci-Fi`], Counters.genresWatched.Animation,
+          Counters.genresWatched.Fantasy, Counters.genresWatched.Comedy,
+          Counters.genresWatched[`TV Series`]],
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -134,8 +145,51 @@ const renderFilmCard = (container, data, boolean) => {
     statsData.isWatchedCounter = Counters.isWatched;
     statsData.totalDuration.hours = Math.floor(Counters.totalDuration / MIN_IN_HOUR);
     statsData.totalDuration.min = Counters.totalDuration % MIN_IN_HOUR;
-    console.log(data.state.isWatched);
-    console.log(Counters.totalDuration);
+
+    const filmsWatched = allFilms.filter((it) => it.state.isWatched === true);
+
+    const countFilmGenres = (genre) => {
+      Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => it.genre === genre ?
+        acc + 1 : acc, 0);
+      return Counters.genresWatched[genre];
+    };
+
+    Counters.genresWatched[`Sci-Fi`] = filmsWatched.reduce((acc, it) => it.genre === `Sci-Fi` ?
+      acc + 1 : acc, 0);
+    Counters.genresWatched.Animation = filmsWatched.reduce((acc, it) => it.genre === `Animation` ?
+      acc + 1 : acc, 0);
+    Counters.genresWatched.Fantasy = filmsWatched.reduce((acc, it) => it.genre === `Fantasy` ?
+      acc + 1 : acc, 0);
+    Counters.genresWatched.Comedy = filmsWatched.reduce((acc, it) => it.genre === `Comedy` ?
+      acc + 1 : acc, 0);
+    Counters.genresWatched[`TV Series`] = filmsWatched.reduce((acc, it) => it.genre === `TV Series` ?
+      acc + 1 : acc, 0);
+
+    statsData.genresWatched = Counters.genresWatched;
+
+    const filmsWatchedMax = Math.max(...Object.values(Counters.genresWatched));
+
+    let topGenre;
+
+    const getTopGenre = () => {
+
+      for (let prop in Counters.genresWatched) {
+        if (Counters.genresWatched[prop] === filmsWatchedMax) {
+          topGenre = prop;
+        }
+      }
+      return topGenre;
+    };
+
+    statsData.topGenre = getTopGenre();
+
+
+    console.log(statsData.topGenre);
+
+    // console.log(data.state.isWatched);
+    // console.log(Counters.totalDuration);
+    console.log(Counters.genresWatched.Animation);
+    console.log(statsData.genresWatched.Animation);
   };
 
   film.onAddToFavorite = (newObject) => {

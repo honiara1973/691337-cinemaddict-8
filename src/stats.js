@@ -28,7 +28,7 @@ class Stats extends Component {
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${this.topGenre}</p>
+        <p class="statistic__item-text">${this._topGenre}</p>
       </li>
     </ul>
 
