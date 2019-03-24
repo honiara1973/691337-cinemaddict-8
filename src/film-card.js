@@ -16,18 +16,11 @@ class FilmCard extends Component {
     this._commentsCounter = data.commentsCounter;
     this._onControls = false;
     this._state = data.state;
-    /*
-    this._state = {
-      isWatched: false,
-      inWatchList: false,
-      isFavorite: false,
-    };*/
 
     this._onCommentsButtonClick = this._onCommentsButtonClick.bind(this);
     this._onAddToWatchList = this._onAddToWatchList.bind(this);
     this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
     this._onAddToFavorite = this._onAddToFavorite.bind(this);
-
   }
 
   _processControls() {
@@ -75,7 +68,6 @@ class FilmCard extends Component {
       this._onAddToFavorite(newData);
     }
     this.update(newData);
-
   }
 
   set onComments(fn) {
@@ -162,8 +154,6 @@ class FilmCard extends Component {
     .addEventListener(`click`, this._onAddToFavorite);
     }
   }
-
-
 }
 
 export default FilmCard;

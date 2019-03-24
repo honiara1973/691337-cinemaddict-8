@@ -6,12 +6,13 @@ class Stats extends Component {
     this._isWatchedCounter = data.isWatchedCounter;
     this._totalDuration = data.totalDuration;
     this._topGenre = data.topGenre;
+    this._yourRank = data.yourRank;
   }
 
   get template() {
     return `
     <section class="statistic visually-hidden">
-    <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
+    <p class="statistic__rank">Your rank <span class="statistic__rank-label">${this._yourRank}</span></p>
 
     <ul class="statistic__text-list">
       <li class="statistic__text-item">

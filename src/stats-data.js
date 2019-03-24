@@ -12,7 +12,8 @@ const statsData = {
     'Comedy': 0,
     'TV Series': 0,
   },
-  topGenre: 0,
+  topGenre: ``,
+  yourRank: ``,
 };
 
 export default statsData;

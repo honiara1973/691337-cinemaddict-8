@@ -1,4 +1,3 @@
-// import makeFilterElement from './make-filter';
 import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
@@ -9,15 +8,11 @@ import statsData from './stats-data';
 import StatsFilter from './stats-filter';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-// import {getRandomInt} from './utils';
+import chartOptions from './my-chart';
 
-// const CARDS_AMOUNT_INITIAL = 7;
-// const CARDS_AMOUNT_TOP = 2;
 const MIN_IN_HOUR = 60;
 const allFilms = getAllFilms();
 const allFilters = getAllFilters();
-
-// const Filters = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 
 const mainContainer = document.querySelector(`.main`);
 const filmsContainer = document.querySelector(`.films`);
@@ -36,7 +31,13 @@ const Counters = {
     'Comedy': 0,
     'TV Series': 0,
   },
-
+  yourRank: {
+    'Sci-Fighter': `Sci-Fi`,
+    'Animation-Fan': `Animation`,
+    'Fantasy-Fan': `Fantasy`,
+    'Comedy-Lover': `Comedy`,
+    'TV-Series-Maniac': `TV Series`,
+  },
 };
 
 const renderFilter = (data) => {
@@ -74,49 +75,7 @@ const renderStats = (data) => {
         anchor: `start`
       }]
     },
-    options: {
-      plugins: {
-        datalabels: {
-          font: {
-            size: 20
-          },
-          color: `#ffffff`,
-          anchor: `start`,
-          align: `start`,
-          offset: 40,
-        }
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: `#ffffff`,
-            padding: 100,
-            fontSize: 20
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-          barThickness: 24
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-        }],
-      },
-      legend: {
-        display: false
-      },
-      tooltips: {
-        enabled: false
-      }
-    }
+    options: chartOptions,
   });
 
   statisticCtx.innerHTML = myChart;
@@ -142,38 +101,17 @@ const renderFilmCard = (container, data, boolean) => {
       acc + 1 : acc, 0);
     Counters.totalDuration = allFilms.reduce((acc, it) => it.state.isWatched === true ?
       acc + it.duration : acc, 0);
-    statsData.isWatchedCounter = Counters.isWatched;
-    statsData.totalDuration.hours = Math.floor(Counters.totalDuration / MIN_IN_HOUR);
-    statsData.totalDuration.min = Counters.totalDuration % MIN_IN_HOUR;
 
     const filmsWatched = allFilms.filter((it) => it.state.isWatched === true);
-
     const countFilmGenres = (genre) => {
       Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => it.genre === genre ?
         acc + 1 : acc, 0);
       return Counters.genresWatched[genre];
     };
-
-    /*
-    Counters.genresWatched[`Sci-Fi`] = filmsWatched.reduce((acc, it) => it.genre === `Sci-Fi` ?
-      acc + 1 : acc, 0);
-    Counters.genresWatched.Animation = filmsWatched.reduce((acc, it) => it.genre === `Animation` ?
-      acc + 1 : acc, 0);
-    Counters.genresWatched.Fantasy = filmsWatched.reduce((acc, it) => it.genre === `Fantasy` ?
-      acc + 1 : acc, 0);
-    Counters.genresWatched.Comedy = filmsWatched.reduce((acc, it) => it.genre === `Comedy` ?
-      acc + 1 : acc, 0);
-    Counters.genresWatched[`TV Series`] = filmsWatched.reduce((acc, it) => it.genre === `TV Series` ?
-      acc + 1 : acc, 0);
-*/
     Object.keys(Counters.genresWatched).forEach((it) => countFilmGenres(it));
 
-    statsData.genresWatched = Counters.genresWatched;
-
     const filmsWatchedMax = Math.max(...Object.values(Counters.genresWatched));
-
     let topGenre;
-
     const getTopGenre = () => {
 
       for (let prop in Counters.genresWatched) {
@@ -184,15 +122,23 @@ const renderFilmCard = (container, data, boolean) => {
       return topGenre;
     };
 
+    let yourRank;
+    const getYourRank = () => {
+
+      for (let prop in Counters.yourRank) {
+        if (Counters.yourRank[prop] === topGenre) {
+          yourRank = prop;
+        }
+      }
+      return yourRank;
+    };
+
+    statsData.isWatchedCounter = Counters.isWatched;
+    statsData.totalDuration.hours = Math.floor(Counters.totalDuration / MIN_IN_HOUR);
+    statsData.totalDuration.min = Counters.totalDuration % MIN_IN_HOUR;
+    statsData.genresWatched = Counters.genresWatched;
     statsData.topGenre = getTopGenre();
-
-
-    console.log(statsData.topGenre);
-
-    // console.log(data.state.isWatched);
-    // console.log(Counters.totalDuration);
-    console.log(Counters.genresWatched.Animation);
-    console.log(statsData.genresWatched.Animation);
+    statsData.yourRank = getYourRank();
   };
 
   film.onAddToFavorite = (newObject) => {
@@ -228,7 +174,6 @@ const getEventFilter = (evt) => {
   };
 
   let filterCaption;
-
   for (let prop in filterCaptions) {
     if (evt.target === filterCaptions[prop]) {
       filterCaption = prop;
@@ -260,7 +205,7 @@ const filterFilms = (films, filterName) => {
 const init = () => {
   createFilterElements();
 
-  getFilmCards(filmsListContainer, allFilms.slice(0, 6), true);
+  getFilmCards(filmsListContainer, allFilms, true);
   filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
 
   filterContainer.addEventListener(`click`, (evt) => {
@@ -292,10 +237,7 @@ const init = () => {
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
     getFilmCards(filmsListContainer, filteredFilms, true);
-
-    // getFilmCards(filmsListContainer, getRandomInt(1, 10), false);
   });
-
 };
 
 init();
