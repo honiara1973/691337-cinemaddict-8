@@ -133,11 +133,8 @@ class FilmDetails extends Component {
           <tr class="film-details__row">
             <td class="film-details__term">Genres</td>
             <td class="film-details__cell">
-            ${this._genre
-            .map((it) =>
-              `<span class="film-details__genre">${it}</span>`)
-            .join(``)}
-            </td>
+            ${this._genre}
+          </td>
           </tr>
         </table>
 

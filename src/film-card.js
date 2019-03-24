@@ -1,6 +1,7 @@
 import Component from './component';
 import * as moment from 'moment';
-import {minToHours} from './utils';
+
+const MIN_IN_HOUR = 60;
 
 class FilmCard extends Component {
   constructor(data) {
@@ -12,10 +13,25 @@ class FilmCard extends Component {
     this._rating = data.rating;
     this._descr = data.descr;
     this._poster = data.poster;
-    this._controls = false;
     this._commentsCounter = data.commentsCounter;
+    this._onControls = false;
+    this._state = data.state;
 
     this._onCommentsButtonClick = this._onCommentsButtonClick.bind(this);
+    this._onAddToWatchList = this._onAddToWatchList.bind(this);
+    this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
+    this._onAddToFavorite = this._onAddToFavorite.bind(this);
+  }
+
+  _processControls() {
+    const entry = {
+      state: {
+        isWatched: this._state.isWatched,
+        inWatchList: this._state.inWatchList,
+        isFavorite: this._state.isFavorite,
+      }
+    };
+    return entry;
   }
 
   _onCommentsButtonClick() {
@@ -24,18 +40,60 @@ class FilmCard extends Component {
     }
   }
 
+  _onAddToWatchList(evt) {
+    evt.preventDefault();
+    this._state.inWatchList = !this._state.inWatchList;
+    const newData = this._processControls();
+    if (typeof this._onAddToWatchList === `function`) {
+      this._onAddToWatchList(newData);
+    }
+    this.update(newData);
+  }
+
+  _onMarkAsWatched(evt) {
+    evt.preventDefault();
+    this._state.isWatched = !this._state.isWatched;
+    const newData = this._processControls();
+    if (typeof this._onMarkAsWatched === `function`) {
+      this._onMarkAsWatched(newData);
+    }
+    this.update(newData);
+  }
+
+  _onAddToFavorite(evt) {
+    evt.preventDefault();
+    this._state.isFavorite = !this._state.isFavorite;
+    const newData = this._processControls();
+    if (typeof this._onAddToFavorite === `function`) {
+      this._onAddToFavorite(newData);
+    }
+    this.update(newData);
+  }
+
   set onComments(fn) {
     this._commentsCounter = fn;
   }
 
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+
+  set onAddToFavorite(fn) {
+    this._onAddToFavorite = fn;
+  }
+
   set hasControls(boolean) {
-    this._controls = boolean;
+    this._onControls = boolean;
   }
 
   get template() {
     return `
     <article
-     ${this._controls ?
+     ${this._onControls ?
     `class="film-card"
     ` : `
     class="film-card film-card--no-controls"
@@ -45,23 +103,24 @@ class FilmCard extends Component {
       <p class="film-card__info">
         <span class="film-card__year">${moment(this._releaseDate).format(`YYYY`)}</span>
         <span class="film-card__duration">
-        ${minToHours(this._duration)}</span>
-        ${this._genre
-        .map((it) =>
-          `<span class="film-card__genre">${it}</span>`)
-        .join(``)}
-      </p>
+        ${Math.floor(this._duration / MIN_IN_HOUR)}h ${this._duration % MIN_IN_HOUR}m
+        </span>
+        ${this._genre}
+       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
-      ${this._controls ? `
+      ${this._onControls ? `
         <p class="film-card__description">
          ${this._descr}</p>
          ` : ``}
       <button class="film-card__comments">${this._commentsCounter} comments</button>
-      ${this._controls ? `
+      ${this._onControls ? `
       <form class="film-card__controls">
-        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
-        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
-        <button class="film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">
+        Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched">
+        Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite">
+        Mark as favorite</button>
       </form>
       ` : ``}
     </article>
@@ -78,11 +137,23 @@ class FilmCard extends Component {
     return super.render();
   }
 
+  update(data) {
+    this._state = data.state;
+  }
+
   createListeners() {
     this._element.querySelector(`.film-card__comments`)
     .addEventListener(`click`, this._onCommentsButtonClick);
-  }
 
+    if (this._onControls) {
+      this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
+    .addEventListener(`click`, this._onAddToWatchList);
+      this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
+    .addEventListener(`click`, this._onMarkAsWatched);
+      this._element.querySelector(`.film-card__controls-item--favorite`)
+    .addEventListener(`click`, this._onAddToFavorite);
+    }
+  }
 }
 
 export default FilmCard;
