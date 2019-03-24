@@ -1,12 +1,12 @@
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+//import Chart from 'chart.js';
+//import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const statisticCtx = document.querySelector(`.statistic__chart`);
+//const statisticCtx = document.querySelector(`.statistic__chart`);
 // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-const BAR_HEIGHT = 50;
-statisticCtx.height = BAR_HEIGHT * 5;
+//const BAR_HEIGHT = 50;
+//statisticCtx.height = BAR_HEIGHT * 5;
 
-const myChart = new Chart(statisticCtx, {
+/*const myChart = new Chart(statisticCtx, {
   plugins: [ChartDataLabels],
   type: `horizontalBar`,
   data: {
@@ -64,3 +64,4 @@ const myChart = new Chart(statisticCtx, {
 });
 
 export default myChart;
+*/

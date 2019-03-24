@@ -3,21 +3,21 @@ import {getRandomFrac, compareRandom, getRandomInt, getRandomElement} from './ut
 const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 const Films = [
-  [`Shindler's List`, `1993-01-01`, [`Epic drama`]],
-  [`The Matrix`, `1999-02-02`, [`Science fiction`]],
-  [`The Dark Knight`, `2008-03-03`, [`Superhero`]],
-  [`Titanic`, `1997-04-04`, [`Disaster drama`]],
-  [`Jurassic Park`, `1993-05-05`, [`Fiction`, `Adventure`]],
-  [`Gladiator`, `2000-06-06`, [`Historical drama`]],
-  [`Star Wars`, `1977-07-07`, [`Epic space`, `Opera`]],
-  [`The Shawshank Redemption`, `1994-08-08`, [`Drama`]],
-  [`The Godfather`, `1972-09-09`, [`Crime`], `2h 40m`],
-  [`Back to the Future`, `1985-10-10`, [`Comic`, `Science fiction`]],
-  [`The Silence of the Lambs`, `1991-11-11`, [`Thriller`]],
-  [`Casablanca`, `1942-12-12`, [`Drama`]],
-  [`Psycho`, `1960-01-01`, [`Horror`]],
-  [`The Green Mile`, `1999-02-02`, [`Fantasy`, `drama`]],
-  [`Alien`, `1979-03-03`, [`Horror`]]
+  [`Shindler's List`, `1993-01-01`],
+  [`The Matrix`, `1999-02-02`],
+  [`The Dark Knight`, `2008-03-03`],
+  [`Titanic`, `1997-04-04`],
+  [`Jurassic Park`, `1993-05-05`],
+  [`Gladiator`, `2000-06-06`],
+  [`Star Wars`, `1977-07-07`],
+  [`The Shawshank Redemption`, `1994-08-08`],
+  [`The Godfather`, `1972-09-09`],
+  [`Back to the Future`, `1985-10-10`],
+  [`The Silence of the Lambs`, `1991-11-11`],
+  [`Casablanca`, `1942-12-12`],
+  [`Psycho`, `1960-01-01`],
+  [`The Green Mile`, `1999-02-02`],
+  [`Alien`, `1979-03-03`]
 ];
 
 const Directors = [`Francis Ford Coppola`, `Quentin Tarantino`, `Martin Scorsese`];
@@ -49,13 +49,13 @@ const getAllFilms = () => {
   const films = [];
 
   for (let el of Films) {
-    const [name, releaseDate, genre] = el;
+    const [name, releaseDate] = el;
 
     const film = {
       name,
       originalName: name,
       releaseDate,
-      genre,
+      genre: getRandomElement([`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`]),
       duration: getRandomInt(120, 240),
       age: getRandomElement([`5+`, `10+`, `18+`]),
       country: getRandomElement([`USA`, `Canada`, `France`]),

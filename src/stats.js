@@ -1,5 +1,4 @@
 import Component from './component';
-// import MyChart from './my-chart';
 
 class Stats extends Component {
   constructor(data) {
@@ -34,7 +33,7 @@ class Stats extends Component {
     </ul>
 
     <div class="statistic__chart-wrap">
-      <canvas class="statistic__chart" width="1000"></canvas>
+      <canvas class="statistic__chart" width="1000">$</canvas>
     </div>
 
   </section>
