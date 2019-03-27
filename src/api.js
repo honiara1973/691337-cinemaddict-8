@@ -27,8 +27,8 @@ const API = class {
 
   getFilms() {
     return this._load({url: `movies`})
-          .then(toJSON)
-          .then(ModelFilm.parseFilms);
+          .then(toJSON);
+          //.then(ModelFilm.parseFilms);
   }
 
   /*
