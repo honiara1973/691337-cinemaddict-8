@@ -1,3 +1,4 @@
+import API from './api';
 import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
@@ -10,8 +11,14 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import chartOptions from './my-chart';
 
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+
 const MIN_IN_HOUR = 60;
-const allFilms = getAllFilms();
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+// const allFilms = getAllFilms();
+const allFilms = api.getFilms();
+console.log(allFilms);
 const allFilters = getAllFilters();
 
 const mainContainer = document.querySelector(`.main`);
@@ -160,8 +167,19 @@ const createFilterElements = () => {
   .forEach((it) => renderFilter(it));
 };
 
+/*
 const getFilmCards = (container, filmsList, boolean) => {
   filmsList.forEach((it) => renderFilmCard(container, it, boolean));
+};
+*/
+
+const getFilmCards = (container, filmsList, boolean) => {
+
+  console.log(filmsList);
+  for (const film of filmsList) {
+    renderFilmCard(container, film, boolean);
+  }
+
 };
 
 const getEventFilter = (evt) => {
@@ -205,8 +223,15 @@ const filterFilms = (films, filterName) => {
 const init = () => {
   createFilterElements();
 
+  /*
+  api.getFilms()
+  .then((tasks) => {
+    renderTasks(tasks);
+  });
+  */
+
   getFilmCards(filmsListContainer, allFilms, true);
-  filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
+  //filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
 
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
