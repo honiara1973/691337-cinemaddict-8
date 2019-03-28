@@ -86,9 +86,9 @@ const renderStats = (data) => {
   statisticCtx.innerHTML = myChart;
 };
 // ниже для рендера карточки надо заменить вероятно data на другое во избежании путаницы. Может card.
-const renderFilmCard = (container, data, boolean) => {
-  const film = new FilmCard(data);
-  const filmDetails = new FilmDetails(data);
+const renderFilmCard = (container, filmData, boolean) => {
+  const film = new FilmCard(filmData);
+  const filmDetails = new FilmDetails(filmData);
 
   container.appendChild(film.render(boolean));
 
@@ -97,12 +97,12 @@ const renderFilmCard = (container, data, boolean) => {
   };
 
   film.onAddToWatchList = (newObject) => {
-    data.inWatchList = newObject.inWatchList;
+    filmData.inWatchList = newObject.inWatchList;
   };
 
   film.onMarkAsWatched = (newObject) => {
-    data.isWatched = newObject.isWatched;
-    console.log(data.isWatched);
+    filmData.isWatched = newObject.isWatched;
+    console.log(filmData.isWatched);
     Counters.isWatched = allFilms.reduce((acc, it) => it.isWatched === true ?
       acc + 1 : acc, 0);
     Counters.totalDuration = allFilms.reduce((acc, it) => it.isWatched === true ?
@@ -148,13 +148,13 @@ const renderFilmCard = (container, data, boolean) => {
   };
 
   film.onAddToFavorite = (newObject) => {
-    data.isFavorite = newObject.isFavorite;
+    filmData.isFavorite = newObject.isFavorite;
   };
 
   filmDetails.onClose = (newObject) => {
-    data.userComment = newObject.userComment;
-    data.commentsCounter = newObject.commentsCounter;
-    film.partialUpdate(data);
+    filmData.userComment = newObject.userComment;
+    filmData.commentsCounter = newObject.commentsCounter;
+    film.partialUpdate(filmData);
     document.body.removeChild(document.body.lastChild);
     filmDetails.unrender();
 /*Из демки учебного:
@@ -283,7 +283,8 @@ const init = () => {
     const filteredFilms = filterFilms(allFilms, filterCaption);
     console.log(filterCaption); //выдает название фильтра правильно
     console.log(filteredFilms); //выдает кликнутый фильм
-    getFilmCards(filmsListContainer, filteredFilms, true);//это надо переписать, не работает
+    filteredFilms.forEach((el) => renderFilmCard(filmsListContainer, el, true));
+    //getFilmCards(filmsListContainer, filteredFilms, true);это надо переписать, не работает
   });
 };
 

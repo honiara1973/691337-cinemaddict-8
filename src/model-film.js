@@ -14,8 +14,10 @@ class ModelFilm {
     this.country = data[`film_info`][`release`][`release_country`] || ``;
     this.rating = data[`film_info`][`total_rating`] || ``;
     this.comments = data[`comments`] || [];
-    this.comments.author = data[`comments`][0][`author`] || [];
-    this.comments.text = data[`comments`][0][`comment`] || [];
+    this.comments.author = data[`comments`][`author`] || ``;
+    this.comments.comment = data[`comments`][`comment`] || ``;
+    this.comments.date = data[`comments`][`date`] || ``;
+    this.comments.emotion = data[`comments`][`emotion`] || ``;
     this.poster = data[`film_info`][`poster`];
     this.commentsCounter = data[`comments`].length;
     this.isWatched = data[`user_details`][`already_watched`];

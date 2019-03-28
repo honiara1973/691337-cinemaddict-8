@@ -105,7 +105,7 @@ class FilmCard extends Component {
         <span class="film-card__duration">
         ${Math.floor(this._duration / MIN_IN_HOUR)}h ${this._duration % MIN_IN_HOUR}m
         </span>
-        ${this._genre}
+        ${this._genre.join(`, `)}
        </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
       ${this._onControls ? `

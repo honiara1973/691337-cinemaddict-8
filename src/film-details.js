@@ -160,17 +160,20 @@ class FilmDetails extends Component {
       </h3>
 
       <ul class="film-details__comments-list">
-        <li class="film-details__comment">
-          <span class="film-details__comment-emoji">😴</span>
-          <div>
-            <p class="film-details__comment-text">${this._comments.text}</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">${this._comments.author}</span>
-              <span class="film-details__comment-day">
-              ${moment(this._comments.day).startOf(`hour`).fromNow()}</span>
-            </p>
-          </div>
-        </li>
+      ${this._comments
+      .map((it) => `
+      <li class="film-details__comment">
+        <span class="film-details__comment-emoji">😴</span>
+      <div>
+        <p class="film-details__comment-text">${it.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${it.author}</span>
+          <span class="film-details__comment-day">
+          ${moment(it.date).startOf(`hour`).fromNow()}</span>
+        </p>
+      </div>
+    </li>
+      `)}
       </ul>
 
       <div class="film-details__new-comment">
