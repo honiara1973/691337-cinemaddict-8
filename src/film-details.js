@@ -22,7 +22,7 @@ class FilmDetails extends Component {
     this._comments = data.comments;
     this._poster = data.poster;
     this._onClose = null;
-    this._userComment = data.userComment;
+    this._userComment = {};
     this._userScore = data.userScore;
 
     this._scoreChecked = this._userScore !== `` ? this._userScore :
@@ -34,9 +34,10 @@ class FilmDetails extends Component {
   _processForm(formData) {
     const entry = {
       userComment: {
-        text: ``,
-        author: this._userComment.author,
-        day: this._userComment.day,
+        comment: ``,
+        author: `You`,
+        date: new Date().getTime(),
+        emotion: ``,
       },
 
       userScore: ``,
@@ -62,8 +63,9 @@ class FilmDetails extends Component {
 
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const newData = this._processForm(formData);
+    console.log(newData);
 
-    newData[`commentsCounter`] = newData.userComment.text.length > 0 ?
+    newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
       this._commentsCounter += 1 : this._commentsCounter;
 
     if (typeof this._onClose === `function`) {
@@ -247,7 +249,9 @@ class FilmDetails extends Component {
   }
 
   update(data) {
-    this._comments = data.userComment.text.length > 0 ? data.userComment : this._comments;
+    this._comments = data.userComment.comment.length > 0 ?
+      [...this._comments].concat(data.userComment) : this._comments;
+    console.log(this._comments);
     this._userScore = data.userScore;
     this._scoreChecked = this._userScore;
     this._commentsCounter = data.commentsCounter;
@@ -255,7 +259,7 @@ class FilmDetails extends Component {
 
   static createMapper(target) {
     return {
-      comment: (value) => (target.userComment.text = value),
+      comment: (value) => (target.userComment.comment = value),
       score: (value) => (target.userScore = value),
     };
   }
