@@ -16,9 +16,7 @@ const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 const MIN_IN_HOUR = 60;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
-const allFilms = getAllFilms();
-// const allFilms = api.getFilms();
-// console.log(allFilms);
+let allFilms;
 const allFilters = getAllFilters();
 
 const mainContainer = document.querySelector(`.main`);
@@ -167,21 +165,21 @@ const createFilterElements = () => {
   .forEach((it) => renderFilter(it));
 };
 
-
+/*
 const getFilmCards = (container, filmsList, boolean) => {
   filmsList.forEach((it) => renderFilmCard(container, it, boolean));
 };
-
-/*
-const getFilmCards = (container, filmsList, boolean) => {
-
-  console.log(filmsList);
-  for (const film of filmsList) {
-    renderFilmCard(container, film, boolean);
-  }
-
-};
 */
+
+
+const getFilmCards = (container, boolean) => {
+  api.getFilms()
+  .then((it) => {
+    allFilms = it;
+    console.log(allFilms);
+    allFilms.forEach((el) => renderFilmCard(container, el, boolean));
+  });
+};
 
 const getEventFilter = (evt) => {
   const filterCaptions = {
@@ -224,15 +222,13 @@ const filterFilms = (films, filterName) => {
 const init = () => {
   createFilterElements();
 
-  //const arr = api.getFilms();
-
   /*
   api.getFilms().then((tasks) => {
     renderTasks(tasks);
   });
    */
 
-  getFilmCards(filmsListContainer, allFilms, true);
+  getFilmCards(filmsListContainer, true);
   // filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
 
   filterContainer.addEventListener(`click`, (evt) => {
@@ -241,7 +237,7 @@ const init = () => {
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
     newFilter.classList.add((`main-navigation__item--active`));
-    //console.log(arr);
+    // console.log(arr);
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }

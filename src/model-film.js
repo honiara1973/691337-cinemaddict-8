@@ -14,8 +14,15 @@ class ModelFilm {
     this.country = data[`film_info`][`release`][`release_country`] || ``;
     this.rating = data[`film_info`][`total_rating`] || ``;
     this.comments = data[`comments`] || [];
-    this.userScore = data[`user_details`][`personal_rating`] || ``;
+    this.comments.author = data[`comments`][0][`author`] || [];
+    this.comments.text = data[`comments`][0][`comment`] || [];
     this.poster = data[`film_info`][`poster`];
+    this.commentsCounter = data[`comments`].length;
+    //this.state.isWatched = data[`user_details`][`already_watched`];
+    //this.state.inWatchList = data[`user_details`][`watchlist`];
+    //this.state.isFavorite = data[`user_details`][`favorite`];
+    this.userScore = Math.floor(data[`user_details`][`personal_rating`]);
+    this.userComment = {};
   }
 
   static parseFilm(data) {
