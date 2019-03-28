@@ -18,11 +18,25 @@ class ModelFilm {
     this.comments.text = data[`comments`][0][`comment`] || [];
     this.poster = data[`film_info`][`poster`];
     this.commentsCounter = data[`comments`].length;
-    //this.state.isWatched = data[`user_details`][`already_watched`];
-    //this.state.inWatchList = data[`user_details`][`watchlist`];
-    //this.state.isFavorite = data[`user_details`][`favorite`];
+    this.isWatched = data[`user_details`][`already_watched`];
+    this.inWatchList = data[`user_details`][`watchlist`];
+    this.isFavorite = data[`user_details`][`favorite`];
     this.userScore = Math.floor(data[`user_details`][`personal_rating`]);
     this.userComment = {};
+  }
+
+  toRAW() {
+    return {
+      'id': this.id,
+      'film_info': {
+        'title': this.name,
+      },
+      'user_details': {
+        'already_watched': this.isWatched,
+        'watchlist': this.inWatchList,
+        'favorite': this.isFavorite
+      }
+    };
   }
 
   static parseFilm(data) {

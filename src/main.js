@@ -3,7 +3,7 @@ import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import getAllFilters from './filter-data';
-import getAllFilms from './film-data';
+// import getAllFilms from './film-data';
 import Stats from './stats';
 import statsData from './stats-data';
 import StatsFilter from './stats-filter';
@@ -85,7 +85,7 @@ const renderStats = (data) => {
 
   statisticCtx.innerHTML = myChart;
 };
-
+// ниже для рендера карточки надо заменить вероятно data на другое во избежании путаницы. Может card.
 const renderFilmCard = (container, data, boolean) => {
   const film = new FilmCard(data);
   const filmDetails = new FilmDetails(data);
@@ -97,17 +97,18 @@ const renderFilmCard = (container, data, boolean) => {
   };
 
   film.onAddToWatchList = (newObject) => {
-    data.state.inWatchList = newObject.state.inWatchList;
+    data.inWatchList = newObject.inWatchList;
   };
 
   film.onMarkAsWatched = (newObject) => {
-    data.state.isWatched = newObject.state.isWatched;
-    Counters.isWatched = allFilms.reduce((acc, it) => it.state.isWatched === true ?
+    data.isWatched = newObject.isWatched;
+    console.log(data.isWatched);
+    Counters.isWatched = allFilms.reduce((acc, it) => it.isWatched === true ?
       acc + 1 : acc, 0);
-    Counters.totalDuration = allFilms.reduce((acc, it) => it.state.isWatched === true ?
+    Counters.totalDuration = allFilms.reduce((acc, it) => it.isWatched === true ?
       acc + it.duration : acc, 0);
 
-    const filmsWatched = allFilms.filter((it) => it.state.isWatched === true);
+    const filmsWatched = allFilms.filter((it) => it.isWatched === true);
     const countFilmGenres = (genre) => {
       Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => it.genre === genre ?
         acc + 1 : acc, 0);
@@ -147,7 +148,7 @@ const renderFilmCard = (container, data, boolean) => {
   };
 
   film.onAddToFavorite = (newObject) => {
-    data.state.isFavorite = newObject.state.isFavorite;
+    data.isFavorite = newObject.isFavorite;
   };
 
   filmDetails.onClose = (newObject) => {
@@ -156,6 +157,27 @@ const renderFilmCard = (container, data, boolean) => {
     film.partialUpdate(data);
     document.body.removeChild(document.body.lastChild);
     filmDetails.unrender();
+/*Из демки учебного:
+    editTaskComponent.onSubmit = (newObject) => {
+      task.title = newObject.title;
+      task.tags = newObject.tags;
+      task.color = newObject.color;
+      task.repeatingDays = newObject.repeatingDays;
+      task.dueDate = newObject.dueDate;
+
+      api.updateTask({id: task.id, data: task.toRAW()})
+        .then((newTask) => {
+          taskComponent.update(newTask);
+          taskComponent.render();
+
+          tasksContainer.replaceChild(taskComponent.element, editTaskComponent.element);
+
+          editTaskComponent.unrender();
+        });
+*/
+
+
+
   };
 
 };
@@ -206,13 +228,13 @@ const filterFilms = (films, filterName) => {
       return allFilms;
 
     case `watchlist`:
-      return allFilms.filter((it) => it.state.inWatchList === true);
+      return allFilms.filter((it) => it.inWatchList === true);
 
     case `history`:
-      return allFilms.filter((it) => it.state.isWatched === true);
+      return allFilms.filter((it) => it.isWatched === true);
 
     case `favorites`:
-      return allFilms.filter((it) => it.state.isFavorite === true);
+      return allFilms.filter((it) => it.isFavorite === true);
 
     default:
       return [];
@@ -237,7 +259,7 @@ const init = () => {
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
     newFilter.classList.add((`main-navigation__item--active`));
-    // console.log(arr);
+
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
@@ -259,7 +281,9 @@ const init = () => {
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
-    getFilmCards(filmsListContainer, filteredFilms, true);
+    console.log(filterCaption); //выдает название фильтра правильно
+    console.log(filteredFilms); //выдает кликнутый фильм
+    getFilmCards(filmsListContainer, filteredFilms, true);//это надо переписать, не работает
   });
 };
 
