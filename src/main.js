@@ -32,16 +32,24 @@ const Counters = {
   genresWatched: {
     'Sci-Fi': 0,
     'Animation': 0,
-    'Fantasy': 0,
     'Comedy': 0,
-    'TV Series': 0,
+    'Family': 0,
+    'Adventure': 0,
+    'Action': 0,
+    'Drama': 0,
+    'Horror': 0,
+    'Thriller': 0,
   },
   yourRank: {
     'Sci-Fighter': `Sci-Fi`,
     'Animation-Fan': `Animation`,
-    'Fantasy-Fan': `Fantasy`,
     'Comedy-Lover': `Comedy`,
-    'TV-Series-Maniac': `TV Series`,
+    'Family-Amateur': `Family`,
+    'Adventure-Lover': `Adventure`,
+    'Action-Fan': `Action`,
+    'Drama-Lover': `Drama`,
+    'Horror-Buff': `Horror`,
+    'Thriller-Fan': `Thriller`,
   },
 };
 
@@ -63,18 +71,20 @@ const renderStats = (data) => {
   statsContainer.insertBefore(statsFilter.render(), statsTextList);
 
   const statisticCtx = document.querySelector(`.statistic__chart`);
-  const BAR_HEIGHT = 50;
+  const BAR_HEIGHT = 60;
   statisticCtx.height = BAR_HEIGHT * 5;
 
   const myChart = new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+      labels: Object.keys(Counters.genresWatched),
+      // labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
       datasets: [{
-        data: [Counters.genresWatched[`Sci-Fi`], Counters.genresWatched.Animation,
-          Counters.genresWatched.Fantasy, Counters.genresWatched.Comedy,
-          Counters.genresWatched[`TV Series`]],
+        data: Object.values(Counters.genresWatched),
+        // data: [Counters.genresWatched[`Sci-Fi`], Counters.genresWatched.Animation,
+        //  Counters.genresWatched.Fantasy, Counters.genresWatched.Comedy,
+        //  Counters.genresWatched[`TV Series`]],
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -109,11 +119,21 @@ const renderFilmCard = (container, filmData, boolean) => {
       acc + it.duration : acc, 0);
 
     const filmsWatched = allFilms.filter((it) => it.isWatched === true);
+
+    const countFilmGenres = (genre) => {
+      Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => [...it.genre].includes(genre) ?
+        acc + 1 : acc, 0);
+      return Counters.genresWatched[genre];
+    };
+
+    /*
     const countFilmGenres = (genre) => {
       Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => it.genre === genre ?
         acc + 1 : acc, 0);
       return Counters.genresWatched[genre];
     };
+*/
+
     Object.keys(Counters.genresWatched).forEach((it) => countFilmGenres(it));
 
     const filmsWatchedMax = Math.max(...Object.values(Counters.genresWatched));

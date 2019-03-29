@@ -1,4 +1,5 @@
 import ModelFilm from './model-film';
+import {onLoad} from './utils';
 
 const Method = {
   GET: `GET`,
@@ -7,11 +8,15 @@ const Method = {
   DELETE: `DELETE`
 };
 
+const loadMessage = `Loading movies...`;
+const errorMessage =
+`Something went wrong while loading movies. Check your connection or try again later`;
+
 const checkStatus = (response) => {
-  console.log(`${response.statusText}`);
   if (response.status >= 200 && response.status < 300) {
     return response;
   } else {
+    onLoad(errorMessage);
     throw new Error(`${response.status}: ${response.statusText}`);
   }
 };
@@ -62,6 +67,7 @@ const API = class {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+    .then(onLoad(loadMessage))
           .then(checkStatus)
           .catch((err) => {
             console.error(`fetch error: ${err}`);
