@@ -31,12 +31,11 @@ const API = class {
           .then(ModelFilm.parseFilms);
   }
 
-  /*
-  createFilm({film}) {
+  createFilm({filmData}) {
     return this._load({
       url: `movies`,
       method: Method.POST,
-      body: JSON.stringify(film),
+      body: JSON.stringify(filmData),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON)
@@ -57,7 +56,6 @@ const API = class {
   deleteFilm({id}) {
     return this._load({url: `movies/${id}`, method: Method.DELETE});
   }
-*/
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

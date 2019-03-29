@@ -85,7 +85,7 @@ const renderStats = (data) => {
 
   statisticCtx.innerHTML = myChart;
 };
-// ниже для рендера карточки надо заменить вероятно data на другое во избежании путаницы. Может card.
+
 const renderFilmCard = (container, filmData, boolean) => {
   const film = new FilmCard(filmData);
   const filmDetails = new FilmDetails(filmData);
@@ -155,31 +155,14 @@ const renderFilmCard = (container, filmData, boolean) => {
     filmData.userComment = newObject.userComment;
     filmData.commentsCounter = newObject.commentsCounter;
     film.partialUpdate(filmData);
-    document.body.removeChild(document.body.lastChild);
-    filmDetails.unrender();
-/*Из демки учебного:
-    editTaskComponent.onSubmit = (newObject) => {
-      task.title = newObject.title;
-      task.tags = newObject.tags;
-      task.color = newObject.color;
-      task.repeatingDays = newObject.repeatingDays;
-      task.dueDate = newObject.dueDate;
-
-      api.updateTask({id: task.id, data: task.toRAW()})
-        .then((newTask) => {
-          taskComponent.update(newTask);
-          taskComponent.render();
-
-          tasksContainer.replaceChild(taskComponent.element, editTaskComponent.element);
-
-          editTaskComponent.unrender();
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+        .then((newFilmData) => {
+          film.update(newFilmData);
+          film.render();
+          document.body.removeChild(document.body.lastChild);
+          filmDetails.unrender();
         });
-*/
-
-
-
   };
-
 };
 
 const createFilterElements = () => {
@@ -281,10 +264,10 @@ const init = () => {
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
-    console.log(filterCaption); //выдает название фильтра правильно
-    console.log(filteredFilms); //выдает кликнутый фильм
+    console.log(filterCaption); // выдает название фильтра правильно
+    console.log(filteredFilms); // выдает кликнутый фильм
     filteredFilms.forEach((el) => renderFilmCard(filmsListContainer, el, true));
-    //getFilmCards(filmsListContainer, filteredFilms, true);это надо переписать, не работает
+    // getFilmCards(filmsListContainer, filteredFilms, true);это надо переписать, не работает
   });
 };
 

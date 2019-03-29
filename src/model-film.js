@@ -29,14 +29,12 @@ class ModelFilm {
   toRAW() {
     return {
       'id': this.id,
-      'film_info': {
-        'title': this.name,
-      },
       'user_details': {
         'already_watched': this.isWatched,
         'watchlist': this.inWatchList,
         'favorite': this.isFavorite
-      }
+      },
+      'comments': this.comments,
     };
   }
 
