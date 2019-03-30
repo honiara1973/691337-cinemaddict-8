@@ -1,6 +1,7 @@
 import ModelFilm from './model-film';
-import {onLoad} from './utils';
+// import {onLoad} from './utils';
 
+const MESSAGE_SHOW_INTERVAL = 3000;
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -10,13 +11,34 @@ const Method = {
 
 const loadMessage = `Loading movies...`;
 const errorMessage =
-`Something went wrong while loading movies. Check your connection or try again later`;
+`Something went wrong while loading movies.
+Check your connection or try again later`;
+
+const createMessage = (message) => {
+  const messageElement = document.createElement(`div`);
+
+  const messageContainer = document.querySelector(`.main`);
+
+  messageElement.style =
+  `z-index: 100; margin: 300 auto; text-align: center; background-color: red;`;
+  messageElement.style.position = `fixed`;
+  messageElement.style.left = 0;
+  messageElement.style.right = 0;
+  messageElement.style.fontSize = `24px`;
+
+  messageElement.textContent = message;
+  messageContainer.insertAdjacentElement(`afterbegin`, messageElement);
+
+  setTimeout(() => {
+    messageContainer.removeChild(messageElement);
+  }, MESSAGE_SHOW_INTERVAL);
+};
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
+    createMessage(loadMessage);
     return response;
   } else {
-    onLoad(errorMessage);
     throw new Error(`${response.status}: ${response.statusText}`);
   }
 };
@@ -67,9 +89,10 @@ const API = class {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-    .then(onLoad(loadMessage))
+    // .then(this.createMessage(loadMessage))
           .then(checkStatus)
           .catch((err) => {
+            createMessage(errorMessage);
             console.error(`fetch error: ${err}`);
             throw err;
           });

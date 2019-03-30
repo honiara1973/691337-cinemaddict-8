@@ -63,9 +63,10 @@ class FilmDetails extends Component {
 
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const newData = this._processForm(formData);
-    
+
     newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
       this._commentsCounter += 1 : this._commentsCounter;
+      console.log(this._commentsCounter);
 
     if (typeof this._onClose === `function`) {
       this._onClose(newData);

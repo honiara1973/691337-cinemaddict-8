@@ -174,11 +174,11 @@ const renderFilmCard = (container, filmData, boolean) => {
   filmDetails.onClose = (newObject) => {
     filmData.userComment = newObject.userComment;
     filmData.commentsCounter = newObject.commentsCounter;
+    console.log(filmData.commentsCounter);
     film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
         .then((newFilmData) => {
           film.update(newFilmData);
-          film.render();
           document.body.removeChild(document.body.lastChild);
           filmDetails.unrender();
         });
