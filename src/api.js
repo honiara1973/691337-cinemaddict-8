@@ -1,5 +1,4 @@
 import ModelFilm from './model-film';
-// import {onLoad} from './utils';
 
 const MESSAGE_SHOW_INTERVAL = 3000;
 const Method = {
@@ -89,11 +88,10 @@ const API = class {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-    // .then(this.createMessage(loadMessage))
           .then(checkStatus)
           .catch((err) => {
             createMessage(errorMessage);
-            console.error(`fetch error: ${err}`);
+            // console.error(`fetch error: ${err}`);
             throw err;
           });
   }

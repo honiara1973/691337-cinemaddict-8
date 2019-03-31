@@ -3,9 +3,7 @@ import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import getAllFilters from './filter-data';
-// import getAllFilms from './film-data';
 import Stats from './stats';
-import statsData from './stats-data';
 import StatsFilter from './stats-filter';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -26,9 +24,11 @@ const filmsListContainer = document.querySelector(`.films-list .films-list__cont
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
 
 const Counters = {
-  isWatched: 0,
-  totalDuration: 0,
-
+  filmsWatched: 0,
+  totalDuration: {
+    hours: 0,
+    min: 0,
+  },
   genresWatched: {
     'Sci-Fi': 0,
     'Animation': 0,
@@ -40,7 +40,7 @@ const Counters = {
     'Horror': 0,
     'Thriller': 0,
   },
-  yourRank: {
+  ranks: {
     'Sci-Fighter': `Sci-Fi`,
     'Animation-Fan': `Animation`,
     'Comedy-Lover': `Comedy`,
@@ -51,6 +51,8 @@ const Counters = {
     'Horror-Buff': `Horror`,
     'Thriller-Fan': `Thriller`,
   },
+  topGenre: ``,
+  yourRank: ``,
 };
 
 const renderFilter = (data) => {
@@ -60,6 +62,52 @@ const renderFilter = (data) => {
 };
 
 const renderStats = (data) => {
+  Counters.filmsWatched = allFilms.reduce((acc, it) => it.isWatched === true ?
+    acc + 1 : acc, 0);
+
+  Counters.totalDuration.hours = Math.floor(allFilms.reduce((acc, it) => it.isWatched === true ?
+    acc + it.duration : acc, 0) / MIN_IN_HOUR);
+
+  Counters.totalDuration.minutes = allFilms.reduce((acc, it) => it.isWatched === true ?
+    acc + it.duration : acc, 0) % MIN_IN_HOUR;
+
+  const filmsWatched = allFilms.filter((it) => it.isWatched === true);
+
+  const countFilmGenres = (genre) => {
+    Counters.genresWatched[genre] = filmsWatched
+    .reduce((acc, it) => [...it.genre].includes(genre) ?
+      acc + 1 : acc, 0);
+    return Counters.genresWatched[genre];
+  };
+
+  Object.keys(Counters.genresWatched).forEach((it) => countFilmGenres(it));
+
+  const filmsWatchedMax = Math.max(...Object.values(Counters.genresWatched));
+  let topGenre;
+  const getTopGenre = () => {
+
+    for (let prop in Counters.genresWatched) {
+      if (Counters.genresWatched[prop] === filmsWatchedMax) {
+        topGenre = prop;
+      }
+    }
+    return topGenre;
+  };
+
+  let rank;
+  const getYourRank = () => {
+
+    for (let prop in Counters.ranks) {
+      if (Counters.ranks[prop] === topGenre) {
+        rank = prop;
+      }
+    }
+    return rank;
+  };
+
+  Counters.topGenre = getTopGenre();
+  Counters.yourRank = getYourRank();
+
   const stats = new Stats(data);
 
   mainContainer.appendChild(stats.render());
@@ -79,12 +127,8 @@ const renderStats = (data) => {
     type: `horizontalBar`,
     data: {
       labels: Object.keys(Counters.genresWatched),
-      // labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
       datasets: [{
         data: Object.values(Counters.genresWatched),
-        // data: [Counters.genresWatched[`Sci-Fi`], Counters.genresWatched.Animation,
-        //  Counters.genresWatched.Fantasy, Counters.genresWatched.Comedy,
-        //  Counters.genresWatched[`TV Series`]],
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -113,58 +157,6 @@ const renderFilmCard = (container, filmData, boolean) => {
   film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
     console.log(filmData.isWatched);
-    Counters.isWatched = allFilms.reduce((acc, it) => it.isWatched === true ?
-      acc + 1 : acc, 0);
-    Counters.totalDuration = allFilms.reduce((acc, it) => it.isWatched === true ?
-      acc + it.duration : acc, 0);
-
-    const filmsWatched = allFilms.filter((it) => it.isWatched === true);
-
-    const countFilmGenres = (genre) => {
-      Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => [...it.genre].includes(genre) ?
-        acc + 1 : acc, 0);
-      return Counters.genresWatched[genre];
-    };
-
-    /*
-    const countFilmGenres = (genre) => {
-      Counters.genresWatched[genre] = filmsWatched.reduce((acc, it) => it.genre === genre ?
-        acc + 1 : acc, 0);
-      return Counters.genresWatched[genre];
-    };
-*/
-
-    Object.keys(Counters.genresWatched).forEach((it) => countFilmGenres(it));
-
-    const filmsWatchedMax = Math.max(...Object.values(Counters.genresWatched));
-    let topGenre;
-    const getTopGenre = () => {
-
-      for (let prop in Counters.genresWatched) {
-        if (Counters.genresWatched[prop] === filmsWatchedMax) {
-          topGenre = prop;
-        }
-      }
-      return topGenre;
-    };
-
-    let yourRank;
-    const getYourRank = () => {
-
-      for (let prop in Counters.yourRank) {
-        if (Counters.yourRank[prop] === topGenre) {
-          yourRank = prop;
-        }
-      }
-      return yourRank;
-    };
-
-    statsData.isWatchedCounter = Counters.isWatched;
-    statsData.totalDuration.hours = Math.floor(Counters.totalDuration / MIN_IN_HOUR);
-    statsData.totalDuration.min = Counters.totalDuration % MIN_IN_HOUR;
-    statsData.genresWatched = Counters.genresWatched;
-    statsData.topGenre = getTopGenre();
-    statsData.yourRank = getYourRank();
   };
 
   film.onAddToFavorite = (newObject) => {
@@ -280,7 +272,7 @@ const init = () => {
 
     if (filterCaption === `stats`) {
       filmsContainer.classList.add(`visually-hidden`);
-      renderStats(statsData);
+      renderStats(Counters);
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);

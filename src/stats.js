@@ -3,7 +3,7 @@ import Component from './component';
 class Stats extends Component {
   constructor(data) {
     super();
-    this._isWatchedCounter = data.isWatchedCounter;
+    this._filmsWatched = data.filmsWatched;
     this._totalDuration = data.totalDuration;
     this._topGenre = data.topGenre;
     this._yourRank = data.yourRank;
@@ -17,7 +17,7 @@ class Stats extends Component {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-  <p class="statistic__item-text">${this._isWatchedCounter}
+  <p class="statistic__item-text">${this._filmsWatched}
   <span class="statistic__item-description">movies</span>
   </p>
       </li>
@@ -40,6 +40,12 @@ class Stats extends Component {
   </section>
 `.trim();
   }
+
+  /*update(data) {
+    this._filmsWatched = data.filmsWatched;
+  }
+  */
+
 }
 
 export default Stats;
