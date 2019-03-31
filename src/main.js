@@ -156,17 +156,33 @@ const renderFilmCard = (container, filmData, boolean) => {
 
   film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
-    console.log(filmData.isWatched);
+    //console.log(filmData.isWatched);
   };
 
   film.onAddToFavorite = (newObject) => {
     filmData.isFavorite = newObject.isFavorite;
   };
 
+  filmDetails.onSendComment = (newObject) => {
+    filmData.userComment = newObject.userComment;
+    filmData.commentsCounter = newObject.commentsCounter;
+    film.partialUpdate(filmData);
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.update(newFilmData);
+    });
+  };
+
+  filmDetails.onClose = () => {
+    document.body.removeChild(document.body.lastChild);
+    filmDetails.unrender();
+  };
+
+  /*
   filmDetails.onClose = (newObject) => {
     filmData.userComment = newObject.userComment;
     filmData.commentsCounter = newObject.commentsCounter;
-    console.log(filmData.commentsCounter);
+    //console.log(filmData.commentsCounter);
     film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
         .then((newFilmData) => {
@@ -175,6 +191,7 @@ const renderFilmCard = (container, filmData, boolean) => {
           filmDetails.unrender();
         });
   };
+*/
 };
 
 const createFilterElements = () => {
@@ -276,8 +293,8 @@ const init = () => {
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
-    console.log(filterCaption); // выдает название фильтра правильно
-    console.log(filteredFilms); // выдает кликнутый фильм
+    //console.log(filterCaption); // выдает название фильтра правильно
+    //console.log(filteredFilms); // выдает кликнутый фильм
     filteredFilms.forEach((el) => renderFilmCard(filmsListContainer, el, true));
     // getFilmCards(filmsListContainer, filteredFilms, true);это надо переписать, не работает
   });

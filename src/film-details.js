@@ -22,12 +22,14 @@ class FilmDetails extends Component {
     this._comments = data.comments;
     this._poster = data.poster;
     this._onClose = null;
+    this._onSendComment = null;
     this._userComment = {};
     this._userScore = data.userScore;
 
     this._scoreChecked = this._userScore !== `` ? this._userScore :
       String(Math.floor(this._rating));
 
+    this._onAddComment = this._onAddComment.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
@@ -59,23 +61,56 @@ class FilmDetails extends Component {
     this._userScore = evt.target.value;
   }
 
-  _onCloseButtonClick() {
+  _onAddComment(evt) {
+    if (evt.keyCode === 13) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
+        this._commentsCounter += 1 : this._commentsCounter;
 
-    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-    const newData = this._processForm(formData);
+      if (typeof this._onSendComment === `function`) {
+        this._onSendComment(newData);
+      }
+      console.log(newData); // заполненный объект userComment
 
-    newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
-      this._commentsCounter += 1 : this._commentsCounter;
-
-    if (typeof this._onClose === `function`) {
-      this._onClose(newData);
+      this.update(newData);
+      console.log(this._comments);// пришедший с сервера объет с комментами + наш добавленный
+      this._partialUpdate(); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
-    this.update(newData);
 
   }
 
+//Надо писать обработчик события на оценку пользователя
+//Оценка сейчас работает, только если её выставлять и одновременно высылать коммент
+//Если нет, то у неё нет события, чтобы она запомнилась. Или делать или привешивать к onClose
+
+  _onCloseButtonClick() {
+    if (typeof this._onClose === `function`) {
+      this._onClose();
+    }
+  }
+
+  /*
+  _onCloseButtonClick() {
+  const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+  const newData = this._processForm(formData);
+
+  newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
+  this._commentsCounter += 1 : this._commentsCounter;
+
+    if (typeof this._onClose === `function`) {
+  this._onClose(newData);
+    }
+  this.update(newData);
+  }
+*/
+
   set onClose(fn) {
     this._onClose = fn;
+  }
+
+  set onSendComment(fn) {
+    this._onSendComment = fn;
   }
 
   get template() {
@@ -193,6 +228,8 @@ class FilmDetails extends Component {
             <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
           </div>
         </div>
+
+
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input"
           placeholder="← Select reaction, add comment here" name="comment"></textarea>
@@ -238,6 +275,8 @@ class FilmDetails extends Component {
     .addEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
     .addEventListener(`click`, this._onVoting);
+    this._element.querySelector(`.film-details__comment-input`)
+    .addEventListener(`keydown`, this._onAddComment);
   }
 
   removeListeners() {
@@ -245,6 +284,33 @@ class FilmDetails extends Component {
     .removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
     .removeEventListener(`click`, this._onVoting);
+    this._element.querySelector(`.film-details__comment-input`)
+    .removeEventListener(`keydown`, this._onAddComment);
+  }
+
+  _partialUpdate() {
+    this._element.querySelector(`.film-details__comments-list`)
+    .innerHTML = this._comments
+      .map((it) => `
+      <li class="film-details__comment">
+        <span class="film-details__comment-emoji">😴</span>
+      <div>
+        <p class="film-details__comment-text">${it.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${it.author}</span>
+          <span class="film-details__comment-day">
+          ${moment(it.date).startOf(`hour`).fromNow()}</span>
+        </p>
+      </div>
+    </li>
+      `);
+    this._element.querySelector(`.film-details__comment-label`)
+     .innerHTML = `<textarea class="film-details__comment-input"
+     placeholder="← Select reaction, add comment here" name="comment"></textarea>`;
+    // this._element.querySelector(`.film-details__comment-input`);
+
+    // this.createListeners();
+    /* this._element.innerHTML = this.template;*/
   }
 
   update(data) {
