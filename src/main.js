@@ -12,6 +12,8 @@ import chartOptions from './my-chart';
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
+const INITIAL_FILMS_AMOUNT = 5;
+const TOP_FILMS_AMOUNT = 2;
 const MIN_IN_HOUR = 60;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
@@ -156,7 +158,7 @@ const renderFilmCard = (container, filmData, boolean) => {
 
   film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
-    //console.log(filmData.isWatched);
+    // console.log(filmData.isWatched);
   };
 
   film.onAddToFavorite = (newObject) => {
@@ -205,15 +207,42 @@ const getFilmCards = (container, filmsList, boolean) => {
 };
 */
 
+const getFilmCards = (container, boolean, prop) => {
+  api.getFilms()
+  .then((it) => {
+    allFilms = it;
+    console.log(allFilms);
+    
+    if (prop) {
+      allFilms
+       .slice()
+       .sort((a, b) => {
+         return b[prop] - a[prop];
+       })
+       .slice(0, TOP_FILMS_AMOUNT)
+       .forEach((el) => renderFilmCard(container, el, boolean));
+    } else {
+      allFilms.forEach((el, i) => {
+        if (i < INITIAL_FILMS_AMOUNT) {
+          renderFilmCard(container, el, boolean);
+        }
+      });
+    }
 
+  });
+};
+
+/*
 const getFilmCards = (container, boolean) => {
   api.getFilms()
   .then((it) => {
     allFilms = it;
     console.log(allFilms);
+    console.log(allFilms.length);
     allFilms.forEach((el) => renderFilmCard(container, el, boolean));
   });
 };
+*/
 
 const getEventFilter = (evt) => {
   const filterCaptions = {
@@ -256,15 +285,11 @@ const filterFilms = (films, filterName) => {
 const init = () => {
   createFilterElements();
 
-  /*
-  api.getFilms().then((tasks) => {
-    renderTasks(tasks);
-  });
-   */
-
   getFilmCards(filmsListContainer, true);
-  // filmsListExtras.forEach((it) => getFilmCards(it, allFilms.slice(0, 2), false));
-
+  getFilmCards(filmsListExtras[0], false, `rating`);
+  getFilmCards(filmsListExtras[1], false, `commentsCounter`);
+ 
+ 
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     const newFilter = evt.target;
@@ -293,11 +318,13 @@ const init = () => {
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
-    //console.log(filterCaption); // выдает название фильтра правильно
-    //console.log(filteredFilms); // выдает кликнутый фильм
+    // console.log(filterCaption); // выдает название фильтра правильно
+    // console.log(filteredFilms); // выдает кликнутый фильм
     filteredFilms.forEach((el) => renderFilmCard(filmsListContainer, el, true));
     // getFilmCards(filmsListContainer, filteredFilms, true);это надо переписать, не работает
   });
 };
 
 init();
+
+
