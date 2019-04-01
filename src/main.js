@@ -12,11 +12,20 @@ import chartOptions from './my-chart';
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
-const INITIAL_FILMS_AMOUNT = 5;
+const FILMS_AMOUNT_PER_PAGE = 5;
 const TOP_FILMS_AMOUNT = 2;
 const MIN_IN_HOUR = 60;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
+const getAll = () => {
+  api.getFilms()
+.then((it) => {
+  allFilms = it;
+  console.log(allFilms);
+});
+};
+
+
 const allFilters = getAllFilters();
 
 const mainContainer = document.querySelector(`.main`);
@@ -24,6 +33,7 @@ const filmsContainer = document.querySelector(`.films`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
+const nextPageButton = document.querySelector(`.films-list__show-more`);
 
 const Counters = {
   filmsWatched: 0,
@@ -202,38 +212,32 @@ const createFilterElements = () => {
 };
 
 /*
-const getFilmCards = (container, filmsList, boolean) => {
+const createFilmCards = (container, filmsList, boolean) => {
   filmsList.forEach((it) => renderFilmCard(container, it, boolean));
 };
 */
 
-const getFilmCards = (container, boolean, prop) => {
-  api.getFilms()
-  .then((it) => {
-    allFilms = it;
-    console.log(allFilms);
-    
-    if (prop) {
-      allFilms
+const createFilmCards = (container, boolean, prop) => {
+  if (prop) {
+    allFilms
        .slice()
        .sort((a, b) => {
          return b[prop] - a[prop];
        })
        .slice(0, TOP_FILMS_AMOUNT)
-       .forEach((el) => renderFilmCard(container, el, boolean));
-    } else {
-      allFilms.forEach((el, i) => {
-        if (i < INITIAL_FILMS_AMOUNT) {
-          renderFilmCard(container, el, boolean);
-        }
-      });
-    }
-
-  });
+       .forEach((it) => renderFilmCard(container, it, boolean));
+  } else {
+    allFilms.forEach((it, i) => {
+      if (i < FILMS_AMOUNT_PER_PAGE) {
+        renderFilmCard(container, it, boolean);
+      }
+    });
+  }
 };
 
+
 /*
-const getFilmCards = (container, boolean) => {
+const createFilmCards = (container, boolean) => {
   api.getFilms()
   .then((it) => {
     allFilms = it;
@@ -285,11 +289,29 @@ const filterFilms = (films, filterName) => {
 const init = () => {
   createFilterElements();
 
-  getFilmCards(filmsListContainer, true);
-  getFilmCards(filmsListExtras[0], false, `rating`);
-  getFilmCards(filmsListExtras[1], false, `commentsCounter`);
- 
- 
+  api.getFilms()
+  .then((it) => {
+    allFilms = it;
+    console.log(allFilms);
+    createFilmCards(filmsListContainer, true);
+    createFilmCards(filmsListExtras[0], false, `rating`);
+    createFilmCards(filmsListExtras[1], false, `commentsCounter`);
+  });
+
+  let currentPageNumber = 0;
+  nextPageButton.addEventListener(`click`, () => {
+
+    while (filmsListContainer.firstChild) {
+      filmsListContainer.removeChild(filmsListContainer.firstChild);
+    }
+
+    currentPageNumber += 1;
+    const startNumber = FILMS_AMOUNT_PER_PAGE * currentPageNumber;
+    allFilms
+    .slice(startNumber, startNumber + FILMS_AMOUNT_PER_PAGE)
+    .forEach((it) => renderFilmCard(filmsListContainer, it, true));
+  });
+
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     const newFilter = evt.target;
@@ -320,8 +342,8 @@ const init = () => {
     const filteredFilms = filterFilms(allFilms, filterCaption);
     // console.log(filterCaption); // выдает название фильтра правильно
     // console.log(filteredFilms); // выдает кликнутый фильм
-    filteredFilms.forEach((el) => renderFilmCard(filmsListContainer, el, true));
-    // getFilmCards(filmsListContainer, filteredFilms, true);это надо переписать, не работает
+    filteredFilms.forEach((it) => renderFilmCard(filmsListContainer, it, true));
+
   });
 };
 
