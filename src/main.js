@@ -307,9 +307,16 @@ const init = () => {
 
     currentPageNumber += 1;
     const startNumber = FILMS_AMOUNT_PER_PAGE * currentPageNumber;
+    const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
+    
+    if (endNumber === allFilms.length) {
+      nextPageButton.classList.add(`visually-hidden`);
+    }
+
     allFilms
-    .slice(startNumber, startNumber + FILMS_AMOUNT_PER_PAGE)
+    .slice(startNumber, endNumber)
     .forEach((it) => renderFilmCard(filmsListContainer, it, true));
+
   });
 
   filterContainer.addEventListener(`click`, (evt) => {
@@ -340,9 +347,22 @@ const init = () => {
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
+
+    
+    if (filteredFilms.length > FILMS_AMOUNT_PER_PAGE &&
+    nextPageButton.classList.contains(`visually-hidden`)) {
+      nextPageButton.classList.remove(`visually-hidden`);
+    }
+
+    if (filteredFilms.length <= FILMS_AMOUNT_PER_PAGE &&
+      !nextPageButton.classList.contains(`visually-hidden`)) {
+      nextPageButton.classList.add(`visually-hidden`);
+    }
+
     // console.log(filterCaption); // выдает название фильтра правильно
     // console.log(filteredFilms); // выдает кликнутый фильм
     filteredFilms.forEach((it) => renderFilmCard(filmsListContainer, it, true));
+    
 
   });
 };

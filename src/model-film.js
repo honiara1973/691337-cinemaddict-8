@@ -7,7 +7,7 @@ class ModelFilm {
     this.originalName = data[`film_info`][`alternative_title`] || ``;
     this.descr = data[`film_info`][`description`] || ``;
     this.actors = data[`film_info`][`actors`] || [];
-    this.age = data[`film_info`][`age-rating`] || ``;
+    this.age = data[`film_info`][`age_rating`] || ``;
     this.director = data[`film_info`][`director`] || ``;
     this.writers = data[`film_info`][`writers`] || [];
     this.releaseDate = data[`film_info`][`release`][`date`] || ``;

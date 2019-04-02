@@ -124,7 +124,7 @@ class FilmDetails extends Component {
       <div class="film-details__poster">
         <img class="film-details__poster-img" src="${this._poster}" alt="${this._name}">
 
-        <p class="film-details__age">${this._age}</p>
+        <p class="film-details__age">Age: ${this._age === `` ? `0` : `${this._age}`}+</p>
       </div>
 
       <div class="film-details__info">
