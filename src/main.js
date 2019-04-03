@@ -26,6 +26,7 @@ const Filters = [
   [`Stats`, false, false, true]
 ];
 
+const searchField = document.querySelector(`.search__field`);
 const mainContainer = document.querySelector(`.main`);
 const filmsContainer = document.querySelector(`.films`);
 const filterContainer = document.querySelector(`.main-navigation`);
@@ -383,6 +384,22 @@ const init = () => {
     .slice(startNumber, endNumber)
     .forEach((it) => renderFilmCard(filmsListContainer, it, true));
   });
+
+  searchField.addEventListener(`keyup`, (evt) => {
+    const searchString = evt.target.value;
+
+    while (filmsListContainer.firstChild) {
+      filmsListContainer.removeChild(filmsListContainer.firstChild);
+    }
+
+    allFilms
+    .filter((it) => it.name.includes(searchString) ||
+    it.name.toLowerCase().includes(searchString))
+    .forEach((it) => {
+      renderFilmCard(filmsListContainer, it, true);
+    });
+  });
+
 
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
