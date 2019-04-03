@@ -41,18 +41,6 @@ class Filter extends Component {
     </a>
     `.trim();
   }
-
-  /*
-  createListeners() {
-    document.querySelector(`.main-navigation__item`)
-    .addEventListener(`click`, this._onFilterClick);
-  }
-
-  removeListeners() {
-    document.querySelector(`.main-navigation__item`)
-    .removeEventListener(`click`, this._onFilterClick);
-  }
-*/
 }
 
 export default Filter;

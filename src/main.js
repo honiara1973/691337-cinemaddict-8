@@ -2,7 +2,6 @@ import API from './api';
 import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
-//import getAllFilters from './filter-data';
 import Stats from './stats';
 import StatsFilter from './stats-filter';
 import Chart from 'chart.js';
@@ -34,10 +33,23 @@ const filmsListContainer = document.querySelector(`.films-list .films-list__cont
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
 const nextPageButton = document.querySelector(`.films-list__show-more`);
 
-const Counters = {
+const countFilmsWatched = () => {
+  return allFilms.reduce((acc, it) => it.isWatched === true ?
+    acc + 1 : acc, 0);
+};
+
+const countFilmsInWatchList = () => {
+  return allFilms.reduce((acc, it) => it.inWatchList === true ?
+    acc + 1 : acc, 0);
+};
+
+const countFilmsFavorite = () => {
+  return allFilms.reduce((acc, el) => el.isFavorite === true ?
+    acc + 1 : acc, 0);
+};
+
+const statsCounters = {
   filmsWatched: 0,
-  filmsInWatchList: 0,
-  filmsFavorite: 0,
   totalDuration: {
     hours: 0,
     min: 0,
@@ -71,22 +83,20 @@ const Counters = {
 const getFilterCounter = (caption) => {
   switch (caption) {
     case `Watchlist`:
-      return Counters.filmsInWatchList;
+      return countFilmsInWatchList();
 
     case `History`:
-      return Counters.filmsWatched;
+      return countFilmsWatched();
 
     case `Favorites`:
-      return Counters.filmsFavorite;
+      return countFilmsFavorite();
 
     default:
       return ``;
   }
 };
 
-
 const getAllFilters = () => {
-
   const filters = [];
 
   for (let el of Filters) {
@@ -102,44 +112,39 @@ const getAllFilters = () => {
 
     filters.push(filter);
   }
-
   return filters;
 };
 
-
 const renderFilter = (data) => {
   const filter = new Filter(data);
-
   filterContainer.appendChild(filter.render());
 };
 
 const renderStats = (data) => {
-  Counters.filmsWatched = allFilms.reduce((acc, it) => it.isWatched === true ?
-    acc + 1 : acc, 0);
-
-  Counters.totalDuration.hours = Math.floor(allFilms.reduce((acc, it) => it.isWatched === true ?
+  statsCounters.filmsWatched = countFilmsWatched();
+  statsCounters.totalDuration.hours = Math.floor(allFilms.reduce((acc, it) => it.isWatched === true ?
     acc + it.duration : acc, 0) / MIN_IN_HOUR);
 
-  Counters.totalDuration.minutes = allFilms.reduce((acc, it) => it.isWatched === true ?
+  statsCounters.totalDuration.minutes = allFilms.reduce((acc, it) => it.isWatched === true ?
     acc + it.duration : acc, 0) % MIN_IN_HOUR;
 
   const filmsWatched = allFilms.filter((it) => it.isWatched === true);
 
   const countFilmGenres = (genre) => {
-    Counters.genresWatched[genre] = filmsWatched
+    statsCounters.genresWatched[genre] = filmsWatched
     .reduce((acc, it) => [...it.genre].includes(genre) ?
       acc + 1 : acc, 0);
-    return Counters.genresWatched[genre];
+    return statsCounters.genresWatched[genre];
   };
 
-  Object.keys(Counters.genresWatched).forEach((it) => countFilmGenres(it));
+  Object.keys(statsCounters.genresWatched).forEach((it) => countFilmGenres(it));
 
-  const filmsWatchedMax = Math.max(...Object.values(Counters.genresWatched));
+  const filmsWatchedMax = Math.max(...Object.values(statsCounters.genresWatched));
   let topGenre;
   const getTopGenre = () => {
 
-    for (let prop in Counters.genresWatched) {
-      if (Counters.genresWatched[prop] === filmsWatchedMax) {
+    for (let prop in statsCounters.genresWatched) {
+      if (statsCounters.genresWatched[prop] === filmsWatchedMax) {
         topGenre = prop;
       }
     }
@@ -149,16 +154,16 @@ const renderStats = (data) => {
   let rank;
   const getYourRank = () => {
 
-    for (let prop in Counters.ranks) {
-      if (Counters.ranks[prop] === topGenre) {
+    for (let prop in statsCounters.ranks) {
+      if (statsCounters.ranks[prop] === topGenre) {
         rank = prop;
       }
     }
     return rank;
   };
 
-  Counters.topGenre = getTopGenre();
-  Counters.yourRank = getYourRank();
+  statsCounters.topGenre = getTopGenre();
+  statsCounters.yourRank = getYourRank();
 
   const stats = new Stats(data);
 
@@ -178,9 +183,9 @@ const renderStats = (data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: Object.keys(Counters.genresWatched),
+      labels: Object.keys(statsCounters.genresWatched),
       datasets: [{
-        data: Object.values(Counters.genresWatched),
+        data: Object.values(statsCounters.genresWatched),
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -204,20 +209,20 @@ const renderFilmCard = (container, filmData, boolean) => {
 
   film.onAddToWatchList = (newObject) => {
     filmData.inWatchList = newObject.inWatchList;
+    document.querySelector(`a[href=watchlist] .main-navigation__item-count`)
+    .innerHTML = countFilmsInWatchList();
   };
 
   film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
-    console.log(filmData.isWatched);
-    console.log(Counters.filmsWatched);
-    Counters.filmsWatched = allFilms.reduce((acc, el) => el.isWatched === true ?
-      acc + 1 : acc, 0);
     document.querySelector(`a[href=history] .main-navigation__item-count`)
-    .innerHTML = Counters.filmsWatched;
+    .innerHTML = countFilmsWatched();
   };
 
   film.onAddToFavorite = (newObject) => {
     filmData.isFavorite = newObject.isFavorite;
+    document.querySelector(`a[href=favorites] .main-navigation__item-count`)
+    .innerHTML = countFilmsFavorite();
   };
 
   filmDetails.onSendComment = (newObject) => {
@@ -256,12 +261,6 @@ const createFilterElements = () => {
   .forEach((it) => renderFilter(it));
 };
 
-/*
-const createFilmCards = (container, filmsList, boolean) => {
-  filmsList.forEach((it) => renderFilmCard(container, it, boolean));
-};
-*/
-
 const createFilmCards = (container, boolean, prop) => {
   if (prop) {
     allFilms
@@ -279,19 +278,6 @@ const createFilmCards = (container, boolean, prop) => {
     });
   }
 };
-
-
-/*
-const createFilmCards = (container, boolean) => {
-  api.getFilms()
-  .then((it) => {
-    allFilms = it;
-    console.log(allFilms);
-    console.log(allFilms.length);
-    allFilms.forEach((el) => renderFilmCard(container, el, boolean));
-  });
-};
-*/
 
 const getEventFilter = (evt) => {
   const filterCaptions = {
@@ -337,15 +323,9 @@ const init = () => {
   .then((it) => {
     allFilms = it;
     console.log(allFilms);
-    Counters.filmsWatched = allFilms.reduce((acc, el) => el.isWatched === true ?
-      acc + 1 : acc, 0);
-    Counters.filmsInWatchList = allFilms.reduce((acc, el) => el.inWatchList === true ?
-      acc + 1 : acc, 0);
-    Counters.filmsFavorite = allFilms.reduce((acc, el) => el.isFavorite === true ?
-      acc + 1 : acc, 0);
-    console.log(Counters.filmsWatched);
-    console.log(Counters.filmsInWatchList);
-    console.log(Counters.filmsFavorite);
+    countFilmsWatched();
+    countFilmsInWatchList();
+    countFilmsFavorite();
     allFilters = getAllFilters();
     createFilterElements();
     createFilmCards(filmsListContainer, true);
@@ -363,7 +343,7 @@ const init = () => {
     currentPageNumber += 1;
     const startNumber = FILMS_AMOUNT_PER_PAGE * currentPageNumber;
     const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
-    
+
     if (endNumber === allFilms.length) {
       nextPageButton.classList.add(`visually-hidden`);
     }
@@ -398,12 +378,12 @@ const init = () => {
 
     if (filterCaption === `stats`) {
       filmsContainer.classList.add(`visually-hidden`);
-      renderStats(Counters);
+      renderStats(statsCounters);
     }
 
     const filteredFilms = filterFilms(allFilms, filterCaption);
 
-    
+
     if (filteredFilms.length > FILMS_AMOUNT_PER_PAGE &&
     nextPageButton.classList.contains(`visually-hidden`)) {
       nextPageButton.classList.remove(`visually-hidden`);
@@ -417,7 +397,7 @@ const init = () => {
     // console.log(filterCaption); // выдает название фильтра правильно
     // console.log(filteredFilms); // выдает кликнутый фильм
     filteredFilms.forEach((it) => renderFilmCard(filmsListContainer, it, true));
-    
+
 
   });
 };
