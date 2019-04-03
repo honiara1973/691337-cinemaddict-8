@@ -2,7 +2,7 @@ import API from './api';
 import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
-import getAllFilters from './filter-data';
+//import getAllFilters from './filter-data';
 import Stats from './stats';
 import StatsFilter from './stats-filter';
 import Chart from 'chart.js';
@@ -17,16 +17,15 @@ const TOP_FILMS_AMOUNT = 2;
 const MIN_IN_HOUR = 60;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
-const getAll = () => {
-  api.getFilms()
-.then((it) => {
-  allFilms = it;
-  console.log(allFilms);
-});
-};
+let allFilters;
 
-
-const allFilters = getAllFilters();
+const Filters = [
+  [`All movies`, false, true],
+  [`Watchlist`, true],
+  [`History`, true],
+  [`Favorites`, true],
+  [`Stats`, false, false, true]
+];
 
 const mainContainer = document.querySelector(`.main`);
 const filmsContainer = document.querySelector(`.films`);
@@ -37,6 +36,8 @@ const nextPageButton = document.querySelector(`.films-list__show-more`);
 
 const Counters = {
   filmsWatched: 0,
+  filmsInWatchList: 0,
+  filmsFavorite: 0,
   totalDuration: {
     hours: 0,
     min: 0,
@@ -66,6 +67,45 @@ const Counters = {
   topGenre: ``,
   yourRank: ``,
 };
+
+const getFilterCounter = (caption) => {
+  switch (caption) {
+    case `Watchlist`:
+      return Counters.filmsInWatchList;
+
+    case `History`:
+      return Counters.filmsWatched;
+
+    case `Favorites`:
+      return Counters.filmsFavorite;
+
+    default:
+      return ``;
+  }
+};
+
+
+const getAllFilters = () => {
+
+  const filters = [];
+
+  for (let el of Filters) {
+    const [caption, hasCounter, isActive = false, isAdditional = false] = el;
+
+    const filter = {
+      caption,
+      hasCounter,
+      isActive,
+      isAdditional,
+      counter: getFilterCounter(caption),
+    };
+
+    filters.push(filter);
+  }
+
+  return filters;
+};
+
 
 const renderFilter = (data) => {
   const filter = new Filter(data);
@@ -168,7 +208,12 @@ const renderFilmCard = (container, filmData, boolean) => {
 
   film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
-    // console.log(filmData.isWatched);
+    console.log(filmData.isWatched);
+    console.log(Counters.filmsWatched);
+    Counters.filmsWatched = allFilms.reduce((acc, el) => el.isWatched === true ?
+      acc + 1 : acc, 0);
+    document.querySelector(`a[href=history] .main-navigation__item-count`)
+    .innerHTML = Counters.filmsWatched;
   };
 
   film.onAddToFavorite = (newObject) => {
@@ -287,12 +332,22 @@ const filterFilms = (films, filterName) => {
 };
 
 const init = () => {
-  createFilterElements();
 
   api.getFilms()
   .then((it) => {
     allFilms = it;
     console.log(allFilms);
+    Counters.filmsWatched = allFilms.reduce((acc, el) => el.isWatched === true ?
+      acc + 1 : acc, 0);
+    Counters.filmsInWatchList = allFilms.reduce((acc, el) => el.inWatchList === true ?
+      acc + 1 : acc, 0);
+    Counters.filmsFavorite = allFilms.reduce((acc, el) => el.isFavorite === true ?
+      acc + 1 : acc, 0);
+    console.log(Counters.filmsWatched);
+    console.log(Counters.filmsInWatchList);
+    console.log(Counters.filmsFavorite);
+    allFilters = getAllFilters();
+    createFilterElements();
     createFilmCards(filmsListContainer, true);
     createFilmCards(filmsListExtras[0], false, `rating`);
     createFilmCards(filmsListExtras[1], false, `commentsCounter`);
