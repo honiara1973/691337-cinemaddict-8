@@ -130,7 +130,7 @@ class FilmCard extends Component {
   partialUpdate(data) {
     this._element.querySelector(`.film-card__comments`).
     innerHTML = `${data.commentsCounter} comments`;
-    console.log(data.commentsCounter);
+    // console.log(data.commentsCounter);
   }
 
   render(boolean) {

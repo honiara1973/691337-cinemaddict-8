@@ -41,7 +41,7 @@ class Stats extends Component {
 `.trim();
   }
 
-  /*update(data) {
+  /* update(data) {
     this._filmsWatched = data.filmsWatched;
   }
   */
