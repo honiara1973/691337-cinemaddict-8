@@ -204,6 +204,9 @@ const renderFilmCard = (container, filmData, boolean) => {
   container.appendChild(film.render(boolean));
 
   film.onComments = () => {
+    if (document.querySelector(`.film-details`)) {
+      document.body.removeChild(document.body.lastChild);
+    }
     document.body.appendChild(filmDetails.render());
   };
 
@@ -317,12 +320,37 @@ const filterFilms = (films, filterName) => {
   }
 };
 
+/*
+const renderPage = (container, counter) => {
+  nextPageButton.addEventListener(`click`, () => {
+    while (filmsListContainer.firstChild) {
+      filmsListContainer.removeChild(filmsListContainer.firstChild);
+    }
+
+    counter += 1;
+    console.log(counter);
+    const startNumber = FILMS_AMOUNT_PER_PAGE * counter;
+    const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
+    console.log(endNumber);
+
+    if (endNumber === container.length) {
+      nextPageButton.classList.add(`visually-hidden`);
+      counter = 0;
+    }
+
+    return container
+.slice(startNumber, endNumber)
+.forEach((it) => renderFilmCard(filmsListContainer, it, true));
+  });
+};
+*/
+
 const init = () => {
 
   api.getFilms()
   .then((it) => {
     allFilms = it;
-    console.log(allFilms);
+    // console.log(allFilms);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -331,10 +359,13 @@ const init = () => {
     createFilmCards(filmsListContainer, true);
     createFilmCards(filmsListExtras[0], false, `rating`);
     createFilmCards(filmsListExtras[1], false, `commentsCounter`);
+    // renderPage(allFilms, 0);
   });
 
   let currentPageNumber = 0;
   nextPageButton.addEventListener(`click`, () => {
+  // renderPage(allFilms, 0);
+  // console.log(currentPageNumber);
 
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
@@ -351,7 +382,6 @@ const init = () => {
     allFilms
     .slice(startNumber, endNumber)
     .forEach((it) => renderFilmCard(filmsListContainer, it, true));
-
   });
 
   filterContainer.addEventListener(`click`, (evt) => {
@@ -396,8 +426,12 @@ const init = () => {
 
     // console.log(filterCaption); // выдает название фильтра правильно
     // console.log(filteredFilms); // выдает кликнутый фильм
-    filteredFilms.forEach((it) => renderFilmCard(filmsListContainer, it, true));
 
+    filteredFilms.forEach((it) => {
+      // if (i < FILMS_AMOUNT_PER_PAGE) {
+      renderFilmCard(filmsListContainer, it, true);
+      // }
+    });
 
   });
 };

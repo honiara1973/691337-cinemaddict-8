@@ -71,18 +71,18 @@ class FilmDetails extends Component {
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
-      console.log(newData); // заполненный объект userComment
+      // console.log(newData); // заполненный объект userComment
 
       this.update(newData);
-      console.log(this._comments);// пришедший с сервера объет с комментами + наш добавленный
+      // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
       this._partialUpdate(); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
 
   }
 
-//Надо писать обработчик события на оценку пользователя
-//Оценка сейчас работает, только если её выставлять и одновременно высылать коммент
-//Если нет, то у неё нет события, чтобы она запомнилась. Или делать или привешивать к onClose
+  // Надо писать обработчик события на оценку пользователя
+  // Оценка сейчас работает, только если её выставлять и одновременно высылать коммент
+  // Если нет, то у неё нет события, чтобы она запомнилась. Или делать или привешивать к onClose
 
   _onCloseButtonClick() {
     if (typeof this._onClose === `function`) {
@@ -310,13 +310,13 @@ class FilmDetails extends Component {
     // this._element.querySelector(`.film-details__comment-input`);
 
     // this.createListeners();
-    /* this._element.innerHTML = this.template;*/
+    // this._element.innerHTML = this.template;
   }
 
   update(data) {
     this._comments = data.userComment.comment.length > 0 ?
       [...this._comments].concat(data.userComment) : this._comments;
-    console.log(this._comments);
+    // console.log(this._comments);
     this._userScore = data.userScore;
     this._scoreChecked = this._userScore;
     this._commentsCounter = data.commentsCounter;
