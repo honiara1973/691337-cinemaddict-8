@@ -23,13 +23,15 @@ class FilmDetails extends Component {
     this._poster = data.poster;
     this._onClose = null;
     this._onSendComment = null;
+    this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
 
-    this._scoreChecked = this._userScore !== `` ? this._userScore :
+    /* this._scoreChecked = this._userScore !== `` ? this._userScore :
       String(Math.floor(this._rating));
-
+    */
     this._onAddComment = this._onAddComment.bind(this);
+    this._onAddScore = this._onAddScore.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
@@ -76,10 +78,6 @@ class FilmDetails extends Component {
     return entry;
   }
 
-  _onVoting(evt) {
-    this._userScore = evt.target.value;
-  }
-
   _onAddComment(evt) {
     if (evt.ctrlKey && evt.keyCode === 13) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
@@ -97,8 +95,35 @@ class FilmDetails extends Component {
       // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
       this._partialUpdate(); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
-
   }
+
+  _onAddScore(evt) {
+    this._userScore = evt.target.value;
+    console.log(this._userScore);
+    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+    const newData = this._processForm(formData);
+    newData[`commentsCounter`] = this._commentsCounter;
+    if (typeof this._onVoting === `function`) {
+      this._onVoting(newData);
+    }
+    console.log(newData); // заполненный объект userComment
+    this.update(newData);
+    console.log(this._commentsCounter);
+    // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
+    // this._partialUpdate(); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
+  }
+
+  /*
+  _onAddScore(evt) {
+    const userScore = evt.target;
+    console.log(userScore);
+    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+    const newData = this._processForm(formData);
+    console.log(newData);
+    if (typeof this._onSendComment === `function`) {
+      this._onSendComment(newData);
+    }
+  }*/
 
   // Надо писать обработчик события на оценку пользователя
   // Оценка сейчас работает, только если её выставлять и одновременно высылать коммент
@@ -131,6 +156,10 @@ class FilmDetails extends Component {
 
   set onSendComment(fn) {
     this._onSendComment = fn;
+  }
+
+  set onVoting(fn) {
+    this._onVoting = fn;
   }
 
   get template() {
@@ -277,8 +306,8 @@ class FilmDetails extends Component {
           ${RATING_SCORES
           .map((it) => `
           <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
-          value="${it}" id="rating-${it}"
-          ${it === this._scoreChecked ? `checked` : ``}>
+          value="${it}" id="rating-${it}" 
+          ${it === this._userScore ? `checked` : ``}>
           <label class="film-details__user-rating-label" for="rating-${it}">${it}</label>
          `).join(``)}
           </div>
@@ -294,7 +323,7 @@ class FilmDetails extends Component {
     this._element.querySelector(`.film-details__close-btn`)
     .addEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
-    .addEventListener(`click`, this._onVoting);
+    .addEventListener(`change`, this._onAddScore);
     this._element.querySelector(`.film-details__comment-input`)
     .addEventListener(`keydown`, this._onAddComment);
   }
@@ -303,12 +332,14 @@ class FilmDetails extends Component {
     this._element.querySelector(`.film-details__close-btn`)
     .removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
-    .removeEventListener(`click`, this._onVoting);
+    .removeEventListener(`change`, this._onAddScore);
     this._element.querySelector(`.film-details__comment-input`)
     .removeEventListener(`keydown`, this._onAddComment);
   }
 
   _partialUpdate() {
+    this._element.querySelector(`.film-details__comments-count`)
+    .innerHTML = this._commentsCounter;
     this._element.querySelector(`.film-details__comments-list`)
     .innerHTML = this._comments
       .map((it) => `
@@ -338,7 +369,8 @@ class FilmDetails extends Component {
       [...this._comments].concat(data.userComment) : this._comments;
     // console.log(this._comments);
     this._userScore = data.userScore;
-    this._scoreChecked = this._userScore;
+    console.log(this._userScore);
+    // this._scoreChecked = this._userScore;
     this._commentsCounter = data.commentsCounter;
   }
 

@@ -240,6 +240,14 @@ const renderFilmCard = (container, filmData, boolean) => {
     });
   };
 
+  filmDetails.onVoting = (newObject) => {
+    filmData.userScore = newObject.userScore;
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.update(newFilmData);
+    });
+  };
+
   filmDetails.onClose = () => {
     document.body.removeChild(document.body.lastChild);
     filmDetails.unrender();

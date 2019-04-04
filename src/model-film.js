@@ -32,7 +32,8 @@ class ModelFilm {
       'user_details': {
         'already_watched': this.isWatched,
         'watchlist': this.inWatchList,
-        'favorite': this.isFavorite
+        'favorite': this.isFavorite,
+        'personal_rating': this.userScore,
       },
       'comments': this.comments,
     };
