@@ -33,6 +33,25 @@ class FilmDetails extends Component {
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
+
+  _chooseEmotion(emotion) {
+    switch (emotion) {
+
+      case `grinning`:
+        return `😀`;
+
+      case `neutral-face`:
+        return `😐`;
+
+      case `sleeping`:
+        return `😴`;
+
+      default:
+        return ``;
+    }
+  }
+
+
   _processForm(formData) {
     const entry = {
       userComment: {
@@ -62,9 +81,10 @@ class FilmDetails extends Component {
   }
 
   _onAddComment(evt) {
-    if (evt.keyCode === 13) {
+    if (evt.ctrlKey && evt.keyCode === 13) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
+      console.log(newData);
       newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
         this._commentsCounter += 1 : this._commentsCounter;
 
@@ -199,7 +219,7 @@ class FilmDetails extends Component {
       ${this._comments
       .map((it) => `
       <li class="film-details__comment">
-        <span class="film-details__comment-emoji">😴</span>
+        <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
       <div>
         <p class="film-details__comment-text">${it.comment}</p>
         <p class="film-details__comment-info">
@@ -293,7 +313,7 @@ class FilmDetails extends Component {
     .innerHTML = this._comments
       .map((it) => `
       <li class="film-details__comment">
-        <span class="film-details__comment-emoji">😴</span>
+        <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
       <div>
         <p class="film-details__comment-text">${it.comment}</p>
         <p class="film-details__comment-info">
@@ -324,8 +344,9 @@ class FilmDetails extends Component {
 
   static createMapper(target) {
     return {
-      comment: (value) => (target.userComment.comment = value),
-      score: (value) => (target.userScore = value),
+      'comment': (value) => (target.userComment.comment = value),
+      'score': (value) => (target.userScore = value),
+      'comment-emoji': (value) => (target.userComment.emotion = value),
     };
   }
 
