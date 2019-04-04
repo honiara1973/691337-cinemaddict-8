@@ -26,15 +26,10 @@ class FilmDetails extends Component {
     this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
-
-    /* this._scoreChecked = this._userScore !== `` ? this._userScore :
-      String(Math.floor(this._rating));
-    */
     this._onAddComment = this._onAddComment.bind(this);
     this._onAddScore = this._onAddScore.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
-
 
   _chooseEmotion(emotion) {
     switch (emotion) {
@@ -52,7 +47,6 @@ class FilmDetails extends Component {
         return ``;
     }
   }
-
 
   _processForm(formData) {
     const entry = {
@@ -82,7 +76,6 @@ class FilmDetails extends Component {
     if (evt.ctrlKey && evt.keyCode === 13) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
-      console.log(newData);
       newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
         this._commentsCounter += 1 : this._commentsCounter;
 
@@ -90,50 +83,30 @@ class FilmDetails extends Component {
         this._onSendComment(newData);
       }
       // console.log(newData); // заполненный объект userComment
-
       this.update(newData);
       // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
-      this._partialUpdate(); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
+      this._partialUpdate(`comments`); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
   }
 
   _onAddScore(evt) {
     this._userScore = evt.target.value;
-    console.log(this._userScore);
     const formData = new FormData(this._element.querySelector(`.film-details__inner`));
     const newData = this._processForm(formData);
     newData[`commentsCounter`] = this._commentsCounter;
     if (typeof this._onVoting === `function`) {
       this._onVoting(newData);
     }
-    console.log(newData); // заполненный объект userComment
     this.update(newData);
-    console.log(this._commentsCounter);
-    // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
-    // this._partialUpdate(); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
+    this._partialUpdate(`score`);
   }
-
-  /*
-  _onAddScore(evt) {
-    const userScore = evt.target;
-    console.log(userScore);
-    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-    const newData = this._processForm(formData);
-    console.log(newData);
-    if (typeof this._onSendComment === `function`) {
-      this._onSendComment(newData);
-    }
-  }*/
-
-  // Надо писать обработчик события на оценку пользователя
-  // Оценка сейчас работает, только если её выставлять и одновременно высылать коммент
-  // Если нет, то у неё нет события, чтобы она запомнилась. Или делать или привешивать к onClose
 
   _onCloseButtonClick() {
     if (typeof this._onClose === `function`) {
       this._onClose();
     }
   }
+
 
   /*
   _onCloseButtonClick() {
@@ -337,10 +310,11 @@ class FilmDetails extends Component {
     .removeEventListener(`keydown`, this._onAddComment);
   }
 
-  _partialUpdate() {
-    this._element.querySelector(`.film-details__comments-count`)
+  _partialUpdate(data) {
+    if (data === `comments`) {
+      this._element.querySelector(`.film-details__comments-count`)
     .innerHTML = this._commentsCounter;
-    this._element.querySelector(`.film-details__comments-list`)
+      this._element.querySelector(`.film-details__comments-list`)
     .innerHTML = this._comments
       .map((it) => `
       <li class="film-details__comment">
@@ -355,22 +329,25 @@ class FilmDetails extends Component {
       </div>
     </li>
       `);
-    this._element.querySelector(`.film-details__comment-label`)
+      this._element.querySelector(`.film-details__comment-label`)
      .innerHTML = `<textarea class="film-details__comment-input"
      placeholder="← Select reaction, add comment here" name="comment"></textarea>`;
     // this._element.querySelector(`.film-details__comment-input`);
+    }
 
-    // this.createListeners();
-    // this._element.innerHTML = this.template;
+    if (data === `score`) {
+      this._element.querySelector(`.film-details__user-rating`)
+    .innerHTML = `Your rate ${this._userScore}`;
+    }
+
+    this.createListeners();
   }
 
   update(data) {
     this._comments = data.userComment.comment.length > 0 ?
       [...this._comments].concat(data.userComment) : this._comments;
-    // console.log(this._comments);
     this._userScore = data.userScore;
-    console.log(this._userScore);
-    // this._scoreChecked = this._userScore;
+    // console.log(this._userScore);
     this._commentsCounter = data.commentsCounter;
   }
 
