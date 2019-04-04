@@ -2,6 +2,7 @@ import Component from './component';
 import * as moment from 'moment';
 
 const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
+const ENTER_KEYCODE = 13;
 
 class FilmDetails extends Component {
   constructor(data) {
@@ -72,8 +73,14 @@ class FilmDetails extends Component {
     return entry;
   }
 
+/*
+  block() {
+    document.querySelector(`.film-details__comment-input`).disabled = true;
+    document.querySelector(`.film-details__comment-input`).style.border = `2px solid red`;
+  }
+*/
   _onAddComment(evt) {
-    if (evt.ctrlKey && evt.keyCode === 13) {
+    if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
       newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
@@ -85,7 +92,7 @@ class FilmDetails extends Component {
       // console.log(newData); // заполненный объект userComment
       this.update(newData);
       // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
-      this._partialUpdate(`comments`); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
+      //this._partialUpdate(`comments`); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
   }
 
@@ -279,7 +286,7 @@ class FilmDetails extends Component {
           ${RATING_SCORES
           .map((it) => `
           <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
-          value="${it}" id="rating-${it}" 
+          value="${it}" id="rating-${it}"
           ${it === this._userScore ? `checked` : ``}>
           <label class="film-details__user-rating-label" for="rating-${it}">${it}</label>
          `).join(``)}
@@ -349,6 +356,15 @@ class FilmDetails extends Component {
     this._userScore = data.userScore;
     // console.log(this._userScore);
     this._commentsCounter = data.commentsCounter;
+  }
+
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
+
+    setTimeout(() => {
+      this._element.style.animation = ``;
+    }, ANIMATION_TIMEOUT);
   }
 
   static createMapper(target) {

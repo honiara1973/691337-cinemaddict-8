@@ -231,12 +231,22 @@ const renderFilmCard = (container, filmData, boolean) => {
   };
 
   filmDetails.onSendComment = (newObject) => {
+    const commentInput = document.querySelector(`.film-details__comment-input`);
+    commentInput.disabled = true;
+    commentInput.style.border = null;
     filmData.userComment = newObject.userComment;
     filmData.commentsCounter = newObject.commentsCounter;
     film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
+      commentInput.disabled = false;
       film.update(newFilmData);
+      filmDetails._partialUpdate(`comments`);
+    })
+    .catch(() => {
+      filmDetails.shake();
+      commentInput.style.border = `3px solid red`;
+      commentInput.disabled = false;
     });
   };
 
@@ -354,9 +364,10 @@ const init = () => {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
 
+    currentPageNumber += 1;
     const startNumber = FILMS_AMOUNT_PER_PAGE * currentPageNumber;
     const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
-    currentPageNumber += 1;
+
 
     if (endNumber >= filteredFilms.length) {
       nextPageButton.classList.add(`visually-hidden`);
