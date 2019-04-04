@@ -17,6 +17,7 @@ const MIN_IN_HOUR = 60;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
 let allFilters;
+let filteredFilms;
 
 const Filters = [
   [`All movies`, false, true],
@@ -321,37 +322,11 @@ const filterFilms = (films, filterName) => {
   }
 };
 
-/*
-const renderPage = (container, counter) => {
-  nextPageButton.addEventListener(`click`, () => {
-    while (filmsListContainer.firstChild) {
-      filmsListContainer.removeChild(filmsListContainer.firstChild);
-    }
-
-    counter += 1;
-    console.log(counter);
-    const startNumber = FILMS_AMOUNT_PER_PAGE * counter;
-    const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
-    console.log(endNumber);
-
-    if (endNumber === container.length) {
-      nextPageButton.classList.add(`visually-hidden`);
-      counter = 0;
-    }
-
-    return container
-.slice(startNumber, endNumber)
-.forEach((it) => renderFilmCard(filmsListContainer, it, true));
-  });
-};
-*/
-
 const init = () => {
 
   api.getFilms()
   .then((it) => {
     allFilms = it;
-    // console.log(allFilms);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -360,27 +335,26 @@ const init = () => {
     createFilmCards(filmsListContainer, true);
     createFilmCards(filmsListExtras[0], false, `rating`);
     createFilmCards(filmsListExtras[1], false, `commentsCounter`);
-    // renderPage(allFilms, 0);
+    filteredFilms = filterFilms(allFilms, `all`);
   });
 
   let currentPageNumber = 0;
   nextPageButton.addEventListener(`click`, () => {
-  // renderPage(allFilms, 0);
-  // console.log(currentPageNumber);
 
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
     }
 
-    currentPageNumber += 1;
     const startNumber = FILMS_AMOUNT_PER_PAGE * currentPageNumber;
     const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
+    currentPageNumber += 1;
 
-    if (endNumber === allFilms.length) {
+    if (endNumber >= filteredFilms.length) {
       nextPageButton.classList.add(`visually-hidden`);
+      currentPageNumber = 0;
     }
 
-    allFilms
+    filteredFilms
     .slice(startNumber, endNumber)
     .forEach((it) => renderFilmCard(filmsListContainer, it, true));
   });
@@ -428,8 +402,7 @@ const init = () => {
       renderStats(statsCounters);
     }
 
-    const filteredFilms = filterFilms(allFilms, filterCaption);
-
+    filteredFilms = filterFilms(allFilms, filterCaption);
 
     if (filteredFilms.length > FILMS_AMOUNT_PER_PAGE &&
     nextPageButton.classList.contains(`visually-hidden`)) {
@@ -444,10 +417,10 @@ const init = () => {
     // console.log(filterCaption); // выдает название фильтра правильно
     // console.log(filteredFilms); // выдает кликнутый фильм
 
-    filteredFilms.forEach((it) => {
-      // if (i < FILMS_AMOUNT_PER_PAGE) {
-      renderFilmCard(filmsListContainer, it, true);
-      // }
+    filteredFilms.forEach((it, i) => {
+      if (i < FILMS_AMOUNT_PER_PAGE) {
+        renderFilmCard(filmsListContainer, it, true);
+      }
     });
 
   });
