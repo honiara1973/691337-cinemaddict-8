@@ -19,7 +19,7 @@ const createMessage = (message) => {
   const messageContainer = document.querySelector(`.main`);
 
   messageElement.style =
-  `z-index: 100; margin: 300 auto; text-align: center; background-color: red;`;
+  `z-index: 100; margin: 300 auto; text-align: center; background-color: grey;`;
   messageElement.style.position = `fixed`;
   messageElement.style.left = 0;
   messageElement.style.right = 0;
@@ -86,7 +86,7 @@ const API = class {
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-    
+
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
           .then(checkStatus)
           .catch((err) => {

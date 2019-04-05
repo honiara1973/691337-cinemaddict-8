@@ -1,5 +1,7 @@
-import Component from './component';
 import * as moment from 'moment';
+
+import Component from './component';
+
 
 const MIN_IN_HOUR = 60;
 
@@ -130,7 +132,6 @@ class FilmCard extends Component {
   partialUpdate(data) {
     this._element.querySelector(`.film-card__comments`).
     innerHTML = `${data.commentsCounter} comments`;
-    // console.log(data.commentsCounter);
   }
 
   render(boolean) {
@@ -142,7 +143,6 @@ class FilmCard extends Component {
     this._inWatchList = data.inWatchList;
     this._isWatched = data.isWatched;
     this._isFavorite = data.isFavorite;
-
   }
 
   createListeners() {

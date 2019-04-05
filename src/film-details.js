@@ -27,6 +27,7 @@ class FilmDetails extends Component {
     this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
+
     this._onAddComment = this._onAddComment.bind(this);
     this._onAddScore = this._onAddScore.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
@@ -60,7 +61,6 @@ class FilmDetails extends Component {
 
       userScore: ``,
     };
-
     const filmDetailsMapper = FilmDetails.createMapper(entry);
 
     for (const pair of formData.entries()) {
@@ -69,11 +69,10 @@ class FilmDetails extends Component {
         filmDetailsMapper[property](value);
       }
     }
-
     return entry;
   }
 
- _onAddComment(evt) {
+  _onAddComment(evt) {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
@@ -83,10 +82,7 @@ class FilmDetails extends Component {
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
-      console.log(newData); // заполненный объект userComment
       this.update(newData);
-      console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
-      // this.partialUpdate(`comments`); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
   }
 
@@ -106,22 +102,6 @@ class FilmDetails extends Component {
       this._onClose();
     }
   }
-
-
-  /*
-  _onCloseButtonClick() {
-  const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-  const newData = this._processForm(formData);
-
-  newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
-  this._commentsCounter += 1 : this._commentsCounter;
-
-    if (typeof this._onClose === `function`) {
-  this._onClose(newData);
-    }
-  this.update(newData);
-  }
-*/
 
   set onClose(fn) {
     this._onClose = fn;
@@ -332,7 +312,6 @@ class FilmDetails extends Component {
       this._element.querySelector(`.film-details__comment-label`)
      .innerHTML = `<textarea class="film-details__comment-input"
      placeholder="← Select reaction, add comment here" name="comment"></textarea>`;
-    // this._element.querySelector(`.film-details__comment-input`);
     }
 
     if (data === `score`) {
@@ -340,6 +319,7 @@ class FilmDetails extends Component {
     .innerHTML = `Your rate ${this._userScore}`;
     }
 
+    this.removeListeners();
     this.createListeners();
   }
 
@@ -347,17 +327,14 @@ class FilmDetails extends Component {
     this._comments = data.userComment.comment.length > 0 ?
       [...this._comments].concat(data.userComment) : this._comments;
     this._userScore = data.userScore;
-    // console.log(this._userScore);
     this._commentsCounter = data.commentsCounter;
   }
 
   shake(element) {
     element.animate([
-    // keyframes
       {transform: `translateY(0px)`},
       {transform: `translateY(-30px)`}
     ], {
-    // timing options
       duration: 100,
       iterations: 10
     });
@@ -370,7 +347,6 @@ class FilmDetails extends Component {
       'comment-emoji': (value) => (target.userComment.emotion = value),
     };
   }
-
 }
 
 export default FilmDetails;

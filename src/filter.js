@@ -8,24 +8,11 @@ class Filter extends Component {
     this._isAdditional = data.isAdditional;
     this._counter = data.counter;
     this._isActive = data.isActive;
-    this._onFilter = null;
-    this._onFilterClick = this._onFilterClick.bind(this);
   }
 
   _captionToHref() {
     return this._caption.toLowerCase()
       .split(` `)[0];
-  }
-
-  _onFilterClick(evt) {
-    evt.preventDefault();
-    if (typeof this._onFilter === `function`) {
-      this._onFilter();
-    }
-  }
-
-  set onFilter(fn) {
-    this._onFilter = fn;
   }
 
   get template() {

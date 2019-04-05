@@ -46,7 +46,6 @@ class ModelFilm {
   static parseFilms(data) {
     return data.map(ModelFilm.parseFilm);
   }
-
 }
 
 export default ModelFilm;

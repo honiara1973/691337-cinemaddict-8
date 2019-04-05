@@ -1,12 +1,13 @@
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 import API from './api';
 import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import Stats from './stats';
 import StatsFilter from './stats-filter';
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import chartOptions from './my-chart';
+import chartOptions from './chart-options';
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
@@ -26,29 +27,6 @@ const Filters = [
   [`Favorites`, true],
   [`Stats`, false, false, true]
 ];
-
-const searchField = document.querySelector(`.search__field`);
-const mainContainer = document.querySelector(`.main`);
-const filmsContainer = document.querySelector(`.films`);
-const filterContainer = document.querySelector(`.main-navigation`);
-const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
-const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
-const nextPageButton = document.querySelector(`.films-list__show-more`);
-
-const countFilmsWatched = () => {
-  return allFilms.reduce((acc, it) => it.isWatched === true ?
-    acc + 1 : acc, 0);
-};
-
-const countFilmsInWatchList = () => {
-  return allFilms.reduce((acc, it) => it.inWatchList === true ?
-    acc + 1 : acc, 0);
-};
-
-const countFilmsFavorite = () => {
-  return allFilms.reduce((acc, el) => el.isFavorite === true ?
-    acc + 1 : acc, 0);
-};
 
 const statsCounters = {
   filmsWatched: 0,
@@ -82,6 +60,29 @@ const statsCounters = {
   yourRank: ``,
 };
 
+const searchField = document.querySelector(`.search__field`);
+const mainContainer = document.querySelector(`.main`);
+const filmsContainer = document.querySelector(`.films`);
+const filterContainer = document.querySelector(`.main-navigation`);
+const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
+const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
+const nextPageButton = document.querySelector(`.films-list__show-more`);
+
+const countFilmsWatched = () => {
+  return allFilms.reduce((acc, it) => it.isWatched === true ?
+    acc + 1 : acc, 0);
+};
+
+const countFilmsInWatchList = () => {
+  return allFilms.reduce((acc, it) => it.inWatchList === true ?
+    acc + 1 : acc, 0);
+};
+
+const countFilmsFavorite = () => {
+  return allFilms.reduce((acc, el) => el.isFavorite === true ?
+    acc + 1 : acc, 0);
+};
+
 const getFilterCounter = (caption) => {
   switch (caption) {
     case `Watchlist`:
@@ -95,6 +96,26 @@ const getFilterCounter = (caption) => {
 
     default:
       return ``;
+  }
+};
+
+const filterFilms = (films, filterName) => {
+
+  switch (filterName) {
+    case `all`:
+      return allFilms;
+
+    case `watchlist`:
+      return allFilms.filter((it) => it.inWatchList === true);
+
+    case `history`:
+      return allFilms.filter((it) => it.isWatched === true);
+
+    case `favorites`:
+      return allFilms.filter((it) => it.isFavorite === true);
+
+    default:
+      return [];
   }
 };
 
@@ -115,6 +136,24 @@ const getAllFilters = () => {
     filters.push(filter);
   }
   return filters;
+};
+
+const getEventFilter = (evt) => {
+  const filterCaptions = {
+    all: document.querySelector(`a[href=all]`),
+    watchlist: document.querySelector(`a[href=watchlist]`),
+    history: document.querySelector(`a[href=history]`),
+    favorites: document.querySelector(`a[href=favorites]`),
+    stats: document.querySelector(`a[href=stats]`),
+  };
+
+  let filterCaption;
+  for (let prop in filterCaptions) {
+    if (evt.target === filterCaptions[prop]) {
+      filterCaption = prop;
+    }
+  }
+  return filterCaption;
 };
 
 const renderFilter = (data) => {
@@ -268,21 +307,6 @@ const renderFilmCard = (container, filmData, boolean) => {
     document.body.removeChild(document.body.lastChild);
     filmDetails.unrender();
   };
-
-  /*
-  filmDetails.onClose = (newObject) => {
-    filmData.userComment = newObject.userComment;
-    filmData.commentsCounter = newObject.commentsCounter;
-    //console.log(filmData.commentsCounter);
-    film.partialUpdate(filmData);
-    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
-        .then((newFilmData) => {
-          film.update(newFilmData);
-          document.body.removeChild(document.body.lastChild);
-          filmDetails.unrender();
-        });
-  };
-*/
 };
 
 const createFilterElements = () => {
@@ -308,50 +332,11 @@ const createFilmCards = (container, boolean, prop) => {
   }
 };
 
-const getEventFilter = (evt) => {
-  const filterCaptions = {
-    all: document.querySelector(`a[href=all]`),
-    watchlist: document.querySelector(`a[href=watchlist]`),
-    history: document.querySelector(`a[href=history]`),
-    favorites: document.querySelector(`a[href=favorites]`),
-    stats: document.querySelector(`a[href=stats]`),
-  };
-
-  let filterCaption;
-  for (let prop in filterCaptions) {
-    if (evt.target === filterCaptions[prop]) {
-      filterCaption = prop;
-    }
-  }
-  return filterCaption;
-};
-
-const filterFilms = (films, filterName) => {
-
-  switch (filterName) {
-    case `all`:
-      return allFilms;
-
-    case `watchlist`:
-      return allFilms.filter((it) => it.inWatchList === true);
-
-    case `history`:
-      return allFilms.filter((it) => it.isWatched === true);
-
-    case `favorites`:
-      return allFilms.filter((it) => it.isFavorite === true);
-
-    default:
-      return [];
-  }
-};
-
 const init = () => {
 
   api.getFilms()
   .then((it) => {
     allFilms = it;
-    console.log(allFilms);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -440,15 +425,11 @@ const init = () => {
       nextPageButton.classList.add(`visually-hidden`);
     }
 
-    // console.log(filterCaption); // выдает название фильтра правильно
-    // console.log(filteredFilms); // выдает кликнутый фильм
-
     filteredFilms.forEach((it, i) => {
       if (i < FILMS_AMOUNT_PER_PAGE) {
         renderFilmCard(filmsListContainer, it, true);
       }
     });
-
   });
 };
 
