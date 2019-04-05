@@ -2,6 +2,7 @@ import Component from './component';
 import * as moment from 'moment';
 
 const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
+const ENTER_KEYCODE = 13;
 
 class FilmDetails extends Component {
   constructor(data) {
@@ -22,26 +23,44 @@ class FilmDetails extends Component {
     this._comments = data.comments;
     this._poster = data.poster;
     this._onClose = null;
-    this._userComment = data.userComment;
+    this._onSendComment = null;
+    this._onVoting = null;
+    this._userComment = {};
     this._userScore = data.userScore;
 
-    this._scoreChecked = this._userScore !== `` ? this._userScore :
-      String(Math.floor(this._rating));
-
+    this._onAddComment = this._onAddComment.bind(this);
+    this._onAddScore = this._onAddScore.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+  }
+
+  _chooseEmotion(emotion) {
+    switch (emotion) {
+
+      case `grinning`:
+        return `😀`;
+
+      case `neutral-face`:
+        return `😐`;
+
+      case `sleeping`:
+        return `😴`;
+
+      default:
+        return ``;
+    }
   }
 
   _processForm(formData) {
     const entry = {
       userComment: {
-        text: ``,
-        author: this._userComment.author,
-        day: this._userComment.day,
+        comment: ``,
+        author: `You`,
+        date: new Date().getTime(),
+        emotion: ``,
       },
 
       userScore: ``,
     };
-
     const filmDetailsMapper = FilmDetails.createMapper(entry);
 
     for (const pair of formData.entries()) {
@@ -50,31 +69,50 @@ class FilmDetails extends Component {
         filmDetailsMapper[property](value);
       }
     }
-
     return entry;
   }
 
-  _onVoting(evt) {
+  _onAddComment(evt) {
+    if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
+        this._commentsCounter += 1 : this._commentsCounter;
+
+      if (typeof this._onSendComment === `function`) {
+        this._onSendComment(newData);
+      }
+      this.update(newData);
+    }
+  }
+
+  _onAddScore(evt) {
     this._userScore = evt.target.value;
+    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+    const newData = this._processForm(formData);
+    newData[`commentsCounter`] = this._commentsCounter;
+    if (typeof this._onVoting === `function`) {
+      this._onVoting(newData);
+    }
+    this.update(newData);
   }
 
   _onCloseButtonClick() {
-
-    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-    const newData = this._processForm(formData);
-
-    newData[`commentsCounter`] = newData.userComment.text.length > 0 ?
-      this._commentsCounter += 1 : this._commentsCounter;
-
     if (typeof this._onClose === `function`) {
-      this._onClose(newData);
+      this._onClose();
     }
-    this.update(newData);
-
   }
 
   set onClose(fn) {
     this._onClose = fn;
+  }
+
+  set onSendComment(fn) {
+    this._onSendComment = fn;
+  }
+
+  set onVoting(fn) {
+    this._onVoting = fn;
   }
 
   get template() {
@@ -88,7 +126,7 @@ class FilmDetails extends Component {
       <div class="film-details__poster">
         <img class="film-details__poster-img" src="${this._poster}" alt="${this._name}">
 
-        <p class="film-details__age">${this._age}</p>
+        <p class="film-details__age">Age: ${this._age === `` ? `0` : `${this._age}`}+</p>
       </div>
 
       <div class="film-details__info">
@@ -160,17 +198,20 @@ class FilmDetails extends Component {
       </h3>
 
       <ul class="film-details__comments-list">
-        <li class="film-details__comment">
-          <span class="film-details__comment-emoji">😴</span>
-          <div>
-            <p class="film-details__comment-text">${this._comments.text}</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">${this._comments.author}</span>
-              <span class="film-details__comment-day">
-              ${moment(this._comments.day).startOf(`hour`).fromNow()}</span>
-            </p>
-          </div>
-        </li>
+      ${this._comments
+      .map((it) => `
+      <li class="film-details__comment">
+        <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
+      <div>
+        <p class="film-details__comment-text">${it.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${it.author}</span>
+          <span class="film-details__comment-day">
+          ${moment(it.date).startOf(`hour`).fromNow()}</span>
+        </p>
+      </div>
+    </li>
+      `)}
       </ul>
 
       <div class="film-details__new-comment">
@@ -189,6 +230,8 @@ class FilmDetails extends Component {
             <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
           </div>
         </div>
+
+
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input"
           placeholder="← Select reaction, add comment here" name="comment"></textarea>
@@ -217,7 +260,7 @@ class FilmDetails extends Component {
           .map((it) => `
           <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
           value="${it}" id="rating-${it}"
-          ${it === this._scoreChecked ? `checked` : ``}>
+          ${it === this._userScore ? `checked` : ``}>
           <label class="film-details__user-rating-label" for="rating-${it}">${it}</label>
          `).join(``)}
           </div>
@@ -233,30 +276,77 @@ class FilmDetails extends Component {
     this._element.querySelector(`.film-details__close-btn`)
     .addEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
-    .addEventListener(`click`, this._onVoting);
+    .addEventListener(`change`, this._onAddScore);
+    this._element.querySelector(`.film-details__comment-input`)
+    .addEventListener(`keydown`, this._onAddComment);
   }
 
   removeListeners() {
     this._element.querySelector(`.film-details__close-btn`)
     .removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
-    .removeEventListener(`click`, this._onVoting);
+    .removeEventListener(`change`, this._onAddScore);
+    this._element.querySelector(`.film-details__comment-input`)
+    .removeEventListener(`keydown`, this._onAddComment);
+  }
+
+  partialUpdate(data) {
+    if (data === `comments`) {
+      this._element.querySelector(`.film-details__comments-count`)
+    .innerHTML = this._commentsCounter;
+      this._element.querySelector(`.film-details__comments-list`)
+    .innerHTML = this._comments
+      .map((it) => `
+      <li class="film-details__comment">
+        <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
+      <div>
+        <p class="film-details__comment-text">${it.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${it.author}</span>
+          <span class="film-details__comment-day">
+          ${moment(it.date).startOf(`hour`).fromNow()}</span>
+        </p>
+      </div>
+    </li>
+      `);
+      this._element.querySelector(`.film-details__comment-label`)
+     .innerHTML = `<textarea class="film-details__comment-input"
+     placeholder="← Select reaction, add comment here" name="comment"></textarea>`;
+    }
+
+    if (data === `score`) {
+      this._element.querySelector(`.film-details__user-rating`)
+    .innerHTML = `Your rate ${this._userScore}`;
+    }
+
+    this.removeListeners();
+    this.createListeners();
   }
 
   update(data) {
-    this._comments = data.userComment.text.length > 0 ? data.userComment : this._comments;
+    this._comments = data.userComment.comment.length > 0 ?
+      [...this._comments].concat(data.userComment) : this._comments;
     this._userScore = data.userScore;
-    this._scoreChecked = this._userScore;
     this._commentsCounter = data.commentsCounter;
+  }
+
+  shake(element) {
+    element.animate([
+      {transform: `translateY(0px)`},
+      {transform: `translateY(-30px)`}
+    ], {
+      duration: 100,
+      iterations: 10
+    });
   }
 
   static createMapper(target) {
     return {
-      comment: (value) => (target.userComment.text = value),
-      score: (value) => (target.userScore = value),
+      'comment': (value) => (target.userComment.comment = value),
+      'score': (value) => (target.userScore = value),
+      'comment-emoji': (value) => (target.userComment.emotion = value),
     };
   }
-
 }
 
 export default FilmDetails;

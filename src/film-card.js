@@ -1,5 +1,7 @@
-import Component from './component';
 import * as moment from 'moment';
+
+import Component from './component';
+
 
 const MIN_IN_HOUR = 60;
 
@@ -15,7 +17,9 @@ class FilmCard extends Component {
     this._poster = data.poster;
     this._commentsCounter = data.commentsCounter;
     this._onControls = false;
-    this._state = data.state;
+    this._isWatched = data.isWatched;
+    this._inWatchList = data.inWatchList;
+    this._isFavorite = data.isFavorite;
 
     this._onCommentsButtonClick = this._onCommentsButtonClick.bind(this);
     this._onAddToWatchList = this._onAddToWatchList.bind(this);
@@ -25,11 +29,9 @@ class FilmCard extends Component {
 
   _processControls() {
     const entry = {
-      state: {
-        isWatched: this._state.isWatched,
-        inWatchList: this._state.inWatchList,
-        isFavorite: this._state.isFavorite,
-      }
+      isWatched: this._isWatched,
+      inWatchList: this._inWatchList,
+      isFavorite: this._isFavorite,
     };
     return entry;
   }
@@ -42,7 +44,7 @@ class FilmCard extends Component {
 
   _onAddToWatchList(evt) {
     evt.preventDefault();
-    this._state.inWatchList = !this._state.inWatchList;
+    this._inWatchList = !this._inWatchList;
     const newData = this._processControls();
     if (typeof this._onAddToWatchList === `function`) {
       this._onAddToWatchList(newData);
@@ -52,7 +54,7 @@ class FilmCard extends Component {
 
   _onMarkAsWatched(evt) {
     evt.preventDefault();
-    this._state.isWatched = !this._state.isWatched;
+    this._isWatched = !this._isWatched;
     const newData = this._processControls();
     if (typeof this._onMarkAsWatched === `function`) {
       this._onMarkAsWatched(newData);
@@ -62,7 +64,7 @@ class FilmCard extends Component {
 
   _onAddToFavorite(evt) {
     evt.preventDefault();
-    this._state.isFavorite = !this._state.isFavorite;
+    this._isFavorite = !this._isFavorite;
     const newData = this._processControls();
     if (typeof this._onAddToFavorite === `function`) {
       this._onAddToFavorite(newData);
@@ -105,7 +107,7 @@ class FilmCard extends Component {
         <span class="film-card__duration">
         ${Math.floor(this._duration / MIN_IN_HOUR)}h ${this._duration % MIN_IN_HOUR}m
         </span>
-        ${this._genre}
+        ${this._genre.join(`, `)}
        </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
       ${this._onControls ? `
@@ -138,7 +140,9 @@ class FilmCard extends Component {
   }
 
   update(data) {
-    this._state = data.state;
+    this._inWatchList = data.inWatchList;
+    this._isWatched = data.isWatched;
+    this._isFavorite = data.isFavorite;
   }
 
   createListeners() {

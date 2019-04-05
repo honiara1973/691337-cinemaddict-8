@@ -1,4 +1,4 @@
-import makeFilmCard from './make-card';
+import makeFilmCard from './create-element';
 
 class Component {
   constructor() {
