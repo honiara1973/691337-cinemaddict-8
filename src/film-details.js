@@ -73,13 +73,7 @@ class FilmDetails extends Component {
     return entry;
   }
 
-  /*
-  block() {
-    document.querySelector(`.film-details__comment-input`).disabled = true;
-    document.querySelector(`.film-details__comment-input`).style.border = `2px solid red`;
-  }
-*/
-  _onAddComment(evt) {
+ _onAddComment(evt) {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
@@ -105,7 +99,6 @@ class FilmDetails extends Component {
       this._onVoting(newData);
     }
     this.update(newData);
-    this.partialUpdate(`score`);
   }
 
   _onCloseButtonClick() {
@@ -358,8 +351,8 @@ class FilmDetails extends Component {
     this._commentsCounter = data.commentsCounter;
   }
 
-  shake() {
-    document.querySelector(`.film-details__comment-label`).animate([
+  shake(element) {
+    element.animate([
     // keyframes
       {transform: `translateY(0px)`},
       {transform: `translateY(-30px)`}

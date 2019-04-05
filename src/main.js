@@ -231,6 +231,7 @@ const renderFilmCard = (container, filmData, boolean) => {
   };
 
   filmDetails.onSendComment = (newObject) => {
+    const commentLabel = document.querySelector(`.film-details__comment-label`);
     const commentInput = document.querySelector(`.film-details__comment-input`);
     commentInput.disabled = true;
     commentInput.style.border = null;
@@ -244,20 +245,22 @@ const renderFilmCard = (container, filmData, boolean) => {
       filmDetails.partialUpdate(`comments`);
     })
     .catch(() => {
-      filmDetails.shake();
+      filmDetails.shake(commentLabel);
       commentInput.style.border = `3px solid red`;
       commentInput.disabled = false;
     });
   };
 
   filmDetails.onVoting = (newObject) => {
+    const ratingScoreContainer = document.querySelector(`.film-details__user-rating-score`);
     filmData.userScore = newObject.userScore;
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
+      filmDetails.partialUpdate(`score`);
       film.update(newFilmData);
     })
     .catch(() => {
-
+      filmDetails.shake(ratingScoreContainer);
     });
   };
 
