@@ -73,7 +73,7 @@ class FilmDetails extends Component {
     return entry;
   }
 
-/*
+  /*
   block() {
     document.querySelector(`.film-details__comment-input`).disabled = true;
     document.querySelector(`.film-details__comment-input`).style.border = `2px solid red`;
@@ -89,10 +89,10 @@ class FilmDetails extends Component {
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
-      // console.log(newData); // заполненный объект userComment
+      console.log(newData); // заполненный объект userComment
       this.update(newData);
-      // console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
-      //this._partialUpdate(`comments`); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
+      console.log(this._comments); // пришедший с сервера объет с комментами + наш добавленный
+      // this.partialUpdate(`comments`); // отрисовывает попап заново (правда один раз, и похоже слетают обработчики)
     }
   }
 
@@ -105,7 +105,7 @@ class FilmDetails extends Component {
       this._onVoting(newData);
     }
     this.update(newData);
-    this._partialUpdate(`score`);
+    this.partialUpdate(`score`);
   }
 
   _onCloseButtonClick() {
@@ -317,7 +317,7 @@ class FilmDetails extends Component {
     .removeEventListener(`keydown`, this._onAddComment);
   }
 
-  _partialUpdate(data) {
+  partialUpdate(data) {
     if (data === `comments`) {
       this._element.querySelector(`.film-details__comments-count`)
     .innerHTML = this._commentsCounter;
@@ -359,12 +359,15 @@ class FilmDetails extends Component {
   }
 
   shake() {
-    const ANIMATION_TIMEOUT = 600;
-    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
-
-    setTimeout(() => {
-      this._element.style.animation = ``;
-    }, ANIMATION_TIMEOUT);
+    document.querySelector(`.film-details__comment-label`).animate([
+    // keyframes
+      {transform: `translateY(0px)`},
+      {transform: `translateY(-30px)`}
+    ], {
+    // timing options
+      duration: 100,
+      iterations: 10
+    });
   }
 
   static createMapper(target) {

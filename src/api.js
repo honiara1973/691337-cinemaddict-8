@@ -1,6 +1,6 @@
 import ModelFilm from './model-film';
 
-const MESSAGE_SHOW_INTERVAL = 3000;
+const MESSAGE_SHOW_INTERVAL = 1000;
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -86,7 +86,7 @@ const API = class {
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-
+    
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
           .then(checkStatus)
           .catch((err) => {

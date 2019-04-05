@@ -241,7 +241,7 @@ const renderFilmCard = (container, filmData, boolean) => {
     .then((newFilmData) => {
       commentInput.disabled = false;
       film.update(newFilmData);
-      filmDetails._partialUpdate(`comments`);
+      filmDetails.partialUpdate(`comments`);
     })
     .catch(() => {
       filmDetails.shake();
@@ -255,6 +255,9 @@ const renderFilmCard = (container, filmData, boolean) => {
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
       film.update(newFilmData);
+    })
+    .catch(() => {
+
     });
   };
 
