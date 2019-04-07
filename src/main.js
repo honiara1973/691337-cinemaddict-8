@@ -7,7 +7,7 @@ import FilmCard from './film-card';
 import FilmDetails from './film-details';
 import Stats from './stats';
 import StatsFilter from './stats-filter';
-import chartOptions from './chart-options';
+import ChartOptions from './chart-options';
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
@@ -15,6 +15,8 @@ const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const FILMS_AMOUNT_PER_PAGE = 5;
 const TOP_FILMS_AMOUNT = 2;
 const MIN_IN_HOUR = 60;
+const WATCHED_AMOUNT_LOW = 10;
+const WATCHED_AMOUNT_HIGH = 20;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
 let allFilters;
@@ -67,6 +69,8 @@ const filterContainer = document.querySelector(`.main-navigation`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
 const nextPageButton = document.querySelector(`.films-list__show-more`);
+const rankField = document.querySelector(`.profile__rating`);
+const footerStatistik = document.querySelector(`.footer__statistics p`);
 
 const countFilmsWatched = () => {
   return allFilms.reduce((acc, it) => it.isWatched === true ?
@@ -97,6 +101,19 @@ const getFilterCounter = (caption) => {
     default:
       return ``;
   }
+};
+
+const getUserRank = () => {
+  const watchedAmount = countFilmsWatched();
+  let userRank;
+  if (watchedAmount <= WATCHED_AMOUNT_LOW) {
+    userRank = `novice`;
+  } else if (watchedAmount > WATCHED_AMOUNT_LOW && watchedAmount < WATCHED_AMOUNT_HIGH) {
+    userRank = `fan`;
+  } else {
+    userRank = `movie buff`;
+  }
+  return userRank;
 };
 
 const filterFilms = (films, filterName) => {
@@ -232,7 +249,7 @@ const renderStats = (data) => {
         anchor: `start`
       }]
     },
-    options: chartOptions,
+    options: ChartOptions,
   });
 
   statisticCtx.innerHTML = myChart;
@@ -261,6 +278,7 @@ const renderFilmCard = (container, filmData, boolean) => {
     filmData.isWatched = newObject.isWatched;
     document.querySelector(`a[href=history] .main-navigation__item-count`)
     .innerHTML = countFilmsWatched();
+    updateRankField(getUserRank());
   };
 
   film.onAddToFavorite = (newObject) => {
@@ -332,6 +350,15 @@ const createFilmCards = (container, boolean, prop) => {
   }
 };
 
+const updateRankField = (content) => {
+  rankField.innerHTML = content;
+};
+
+const updateFooterStatistik = (content) => {
+  footerStatistik.innerHTML = `${content} movies inside`;
+};
+
+
 const init = () => {
 
   api.getFilms()
@@ -346,6 +373,8 @@ const init = () => {
     createFilmCards(filmsListContainer, true);
     createFilmCards(filmsListExtras[0], false, `rating`);
     createFilmCards(filmsListExtras[1], false, `commentsCounter`);
+    updateFooterStatistik(allFilms.length);
+    updateRankField(getUserRank());
     filteredFilms = filterFilms(allFilms, `all`);
   });
 

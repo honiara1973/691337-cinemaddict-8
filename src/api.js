@@ -7,9 +7,11 @@ const Method = {
   PUT: `PUT`,
   DELETE: `DELETE`
 };
+const SUCCESS_STATUS_MIN = 200;
+const SUCCESS_STATUS_MAX = 299;
 
-const loadMessage = `Loading movies...`;
-const errorMessage =
+const LOAD_MESSAGE = `Loading movies...`;
+const ERROR_MESSAGE =
 `Something went wrong while loading movies.
 Check your connection or try again later`;
 
@@ -34,8 +36,8 @@ const createMessage = (message) => {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
-    createMessage(loadMessage);
+  if (response.status >= SUCCESS_STATUS_MIN && response.status <= SUCCESS_STATUS_MAX) {
+    createMessage(LOAD_MESSAGE);
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -46,10 +48,13 @@ const toJSON = (response) => {
   return response.json();
 };
 
-const API = class {
+class API {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
+    this._headerType = {
+      'Content-Type': `application/json`
+    };
   }
 
   getFilms() {
@@ -63,7 +68,7 @@ const API = class {
       url: `movies`,
       method: Method.POST,
       body: JSON.stringify(filmData),
-      headers: new Headers({'Content-Type': `application/json`})
+      headers: new Headers(this._headerType)
     })
       .then(toJSON)
       .then(ModelFilm.parseFilm);
@@ -74,7 +79,7 @@ const API = class {
       url: `movies/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data),
-      headers: new Headers({'Content-Type': `application/json`})
+      headers: new Headers(this._headerType)
     })
       .then(toJSON)
       .then(ModelFilm.parseFilm);
@@ -90,11 +95,11 @@ const API = class {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
           .then(checkStatus)
           .catch((err) => {
-            createMessage(errorMessage);
+            createMessage(ERROR_MESSAGE);
             // console.error(`fetch error: ${err}`);
             throw err;
           });
   }
-};
+}
 
 export default API;
