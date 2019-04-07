@@ -3,6 +3,7 @@ import * as moment from 'moment';
 
 const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
 const ENTER_KEYCODE = 13;
+const ESC_KEYCODE = 27;
 
 class FilmDetails extends Component {
   constructor(data) {
@@ -30,6 +31,7 @@ class FilmDetails extends Component {
 
     this._onAddComment = this._onAddComment.bind(this);
     this._onAddScore = this._onAddScore.bind(this);
+    this._onEscEvent = this._onEscEvent.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
@@ -99,6 +101,12 @@ class FilmDetails extends Component {
 
   _onCloseButtonClick() {
     if (typeof this._onClose === `function`) {
+      this._onClose();
+    }
+  }
+
+  _onEscEvent(evt) {
+    if ((evt.keyCode === ESC_KEYCODE) && (typeof this._onClose === `function`)) {
       this._onClose();
     }
   }
@@ -273,6 +281,8 @@ class FilmDetails extends Component {
   }
 
   createListeners() {
+    document.body
+    .addEventListener(`keydown`, this._onEscEvent);
     this._element.querySelector(`.film-details__close-btn`)
     .addEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
@@ -282,6 +292,8 @@ class FilmDetails extends Component {
   }
 
   removeListeners() {
+    document.body
+    .removeEventListener(`keydown`, this._onEscEvent);
     this._element.querySelector(`.film-details__close-btn`)
     .removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__user-rating-score`)
