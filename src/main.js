@@ -17,6 +17,10 @@ const TOP_FILMS_AMOUNT = 2;
 const MIN_IN_HOUR = 60;
 const WATCHED_AMOUNT_LOW = 10;
 const WATCHED_AMOUNT_HIGH = 20;
+const MS_IN_DAY = 24 * 60 * 60 * 1000;
+const MS_IN_WEEK = 7 * MS_IN_DAY;
+const MS_IN_MONTH = 30 * MS_IN_DAY;
+const MS_IN_YEAR = 365 * MS_IN_DAY;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
 let allFilters;
@@ -116,6 +120,28 @@ const getUserRank = () => {
   return userRank;
 };
 
+const getStartDate = (filter) => {
+  switch (filter) {
+    case `statistic-all-time`:
+      return 0;
+
+    case `statistic-year`:
+      return MS_IN_YEAR;
+
+    case `statistic-month`:
+      return MS_IN_MONTH;
+
+    case `statistic-week`:
+      return MS_IN_WEEK;
+
+    case `statistic-today`:
+      return MS_IN_DAY;
+
+    default:
+      return 0;
+  }
+};
+
 const filterFilms = (films, filterName) => {
 
   switch (filterName) {
@@ -178,17 +204,23 @@ const renderFilter = (data) => {
   filterContainer.appendChild(filter.render());
 };
 
-const renderStats = (data) => {
-  statsCounters.filmsWatched = countFilmsWatched();
-  statsCounters.totalDuration.hours = Math.floor(allFilms.reduce((acc, it) => it.isWatched === true ?
+const renderStats = (data, filterId) => {
+  // statsCounters.filmsWatched = countFilmsWatched();
+  statsCounters.filmsWatched = allFilms.reduce((acc, it) => (it.isWatched === true
+  && it.watchedDate > getStartDate(filterId)) ? acc + 1 : acc, 0);
+
+  statsCounters.totalDuration.hours = Math.floor(allFilms.reduce((acc, it) => (it.isWatched === true
+  && it.watchedDate > getStartDate(filterId)) ?
     acc + it.duration : acc, 0) / MIN_IN_HOUR);
 
-  statsCounters.totalDuration.minutes = allFilms.reduce((acc, it) => it.isWatched === true ?
+  statsCounters.totalDuration.minutes = allFilms.reduce((acc, it) => (it.isWatched === true
+  && it.watchedDate > getStartDate(filterId)) ?
     acc + it.duration : acc, 0) % MIN_IN_HOUR;
 
-  const minDate = new Date().getTime() - (2 * 24 * 60 * 60 * 1000);
-  console.log(minDate);
-  const filmsWatched = allFilms.filter((it) => it.isWatched === true && it.watchedDate > minDate);
+  // const minDate = new Date().getTime() - (2 * 24 * 60 * 60 * 1000);
+  // console.log(minDate);
+  const filmsWatched = allFilms.filter((it) => it.isWatched === true &&
+   it.watchedDate > getStartDate(filterId));
 
   const countFilmGenres = (genre) => {
     statsCounters.genresWatched[genre] = filmsWatched
@@ -459,8 +491,10 @@ const init = () => {
       document.querySelector(`.statistic__filters`)
       .addEventListener(`change`, (e) => {
         e.preventDefault();
-        const filt = e.target;
-        console.log(filt);
+        const currentStatsFilter = e.target.id;
+        console.log(currentStatsFilter);
+        //mainContainer.removeChild(mainContainer.lastChild);
+        renderStats(statsCounters, currentStatsFilter.id);
       });
     }
 
