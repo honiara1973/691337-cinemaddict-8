@@ -25,11 +25,13 @@ class FilmDetails extends Component {
     this._poster = data.poster;
     this._onClose = null;
     this._onSendComment = null;
+    this._onUndoComment = null;
     this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
 
     this._onAddComment = this._onAddComment.bind(this);
+    this._onDeleteComment = this._onDeleteComment.bind(this);
     this._onAddScore = this._onAddScore.bind(this);
     this._onEscEvent = this._onEscEvent.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
@@ -80,11 +82,19 @@ class FilmDetails extends Component {
       const newData = this._processForm(formData);
       newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
         this._commentsCounter += 1 : this._commentsCounter;
-
+        
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
       this.update(newData);
+    }
+  }
+
+  _onDeleteComment() {
+    this._comments.pop();
+    this._commentsCounter = this._comments.length;
+    if (typeof this._onUndoComment === `function`) {
+      this._onUndoComment();
     }
   }
 
@@ -119,9 +129,31 @@ class FilmDetails extends Component {
     this._onSendComment = fn;
   }
 
+  set onUndoComment(fn) {
+    this._onUndoComment = fn;
+  }
+
   set onVoting(fn) {
     this._onVoting = fn;
   }
+
+  _getCommentsTemplate() {
+    return this._comments
+    .map((it) => `
+    <li class="film-details__comment">
+      <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
+    <div>
+      <p class="film-details__comment-text">${it.comment}</p>
+      <p class="film-details__comment-info">
+        <span class="film-details__comment-author">${it.author}</span>
+        <span class="film-details__comment-day">
+        ${moment(it.date).startOf(`hour`).fromNow()}</span>
+      </p>
+    </div>
+  </li>
+    `);
+  }
+
 
   get template() {
     return `
@@ -206,20 +238,7 @@ class FilmDetails extends Component {
       </h3>
 
       <ul class="film-details__comments-list">
-      ${this._comments
-      .map((it) => `
-      <li class="film-details__comment">
-        <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
-      <div>
-        <p class="film-details__comment-text">${it.comment}</p>
-        <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${it.author}</span>
-          <span class="film-details__comment-day">
-          ${moment(it.date).startOf(`hour`).fromNow()}</span>
-        </p>
-      </div>
-    </li>
-      `)}
+     ${this._getCommentsTemplate()}
       </ul>
 
       <div class="film-details__new-comment">
@@ -249,8 +268,8 @@ class FilmDetails extends Component {
 
     <section class="film-details__user-rating-wrap">
       <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status film-details__watched-status--active">Already watched</span>
-        <button class="film-details__watched-reset" type="button">undo</button>
+        <span class="film-details__watched-status film-details__watched-status--active"></span>
+        <button class="film-details__watched-reset visually-hidden" type="button">undo</button>
       </div>
 
       <div class="film-details__user-score">
@@ -289,6 +308,8 @@ class FilmDetails extends Component {
     .addEventListener(`change`, this._onAddScore);
     this._element.querySelector(`.film-details__comment-input`)
     .addEventListener(`keydown`, this._onAddComment);
+    this._element.querySelector(`.film-details__watched-reset`)
+    .addEventListener(`click`, this._onDeleteComment);
   }
 
   removeListeners() {
@@ -300,27 +321,20 @@ class FilmDetails extends Component {
     .removeEventListener(`change`, this._onAddScore);
     this._element.querySelector(`.film-details__comment-input`)
     .removeEventListener(`keydown`, this._onAddComment);
+    this._element.querySelector(`.film-details__watched-reset`)
+    .removeEventListener(`click`, this._onDeleteComment);
   }
 
   partialUpdate(data) {
     if (data === `comments`) {
       this._element.querySelector(`.film-details__comments-count`)
     .innerHTML = this._commentsCounter;
+      this._element.querySelector(`.film-details__watched-status`)
+    .innerHTML = `Comment added`;
+      this._element.querySelector(`.film-details__watched-reset`)
+    .classList.remove(`visually-hidden`);
       this._element.querySelector(`.film-details__comments-list`)
-    .innerHTML = this._comments
-      .map((it) => `
-      <li class="film-details__comment">
-        <span class="film-details__comment-emoji">${this._chooseEmotion(it.emotion)}</span>
-      <div>
-        <p class="film-details__comment-text">${it.comment}</p>
-        <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${it.author}</span>
-          <span class="film-details__comment-day">
-          ${moment(it.date).startOf(`hour`).fromNow()}</span>
-        </p>
-      </div>
-    </li>
-      `);
+    .innerHTML = this._getCommentsTemplate();
       this._element.querySelector(`.film-details__comment-label`)
      .innerHTML = `<textarea class="film-details__comment-input"
      placeholder="← Select reaction, add comment here" name="comment"></textarea>`;
@@ -329,6 +343,17 @@ class FilmDetails extends Component {
     if (data === `score`) {
       this._element.querySelector(`.film-details__user-rating`)
     .innerHTML = `Your rate ${this._userScore}`;
+    }
+
+    if (data === `undoComment`) {
+      this._element.querySelector(`.film-details__comments-count`)
+    .innerHTML = this._commentsCounter;
+      this._element.querySelector(`.film-details__watched-status`)
+      .innerHTML = `Comment deleted`;
+      this._element.querySelector(`.film-details__watched-reset`)
+    .classList.add(`visually-hidden`);
+      this._element.querySelector(`.film-details__comments-list`)
+    .innerHTML = this._getCommentsTemplate();
     }
 
     this.removeListeners();

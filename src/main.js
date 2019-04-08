@@ -308,6 +308,16 @@ const renderFilmCard = (container, filmData, boolean) => {
     });
   };
 
+  filmDetails.onUndoComment = () => {
+    film.partialUpdate(filmData);
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.update(newFilmData);
+      film.partialUpdate(newFilmData);
+      filmDetails.partialUpdate(`undoComment`);
+    });
+  };
+
   filmDetails.onVoting = (newObject) => {
     const ratingScoreContainer = document.querySelector(`.film-details__user-rating-score`);
     filmData.userScore = newObject.userScore;
