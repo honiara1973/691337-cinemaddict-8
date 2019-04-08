@@ -186,7 +186,9 @@ const renderStats = (data) => {
   statsCounters.totalDuration.minutes = allFilms.reduce((acc, it) => it.isWatched === true ?
     acc + it.duration : acc, 0) % MIN_IN_HOUR;
 
-  const filmsWatched = allFilms.filter((it) => it.isWatched === true);
+  const minDate = new Date().getTime() - (2 * 24 * 60 * 60 * 1000);
+  console.log(minDate);
+  const filmsWatched = allFilms.filter((it) => it.isWatched === true && it.watchedDate > minDate);
 
   const countFilmGenres = (genre) => {
     statsCounters.genresWatched[genre] = filmsWatched
@@ -276,6 +278,7 @@ const renderFilmCard = (container, filmData, boolean) => {
 
   film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
+    console.log(filmData.isWatched);
     document.querySelector(`a[href=history] .main-navigation__item-count`)
     .innerHTML = countFilmsWatched();
     updateRankField(getUserRank());
@@ -375,6 +378,7 @@ const init = () => {
   .then((it) => {
     allFilms = it;
     console.log(allFilms);
+    console.log(allFilms[0].watchedDate);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -451,6 +455,13 @@ const init = () => {
     if (filterCaption === `stats`) {
       filmsContainer.classList.add(`visually-hidden`);
       renderStats(statsCounters);
+
+      document.querySelector(`.statistic__filters`)
+      .addEventListener(`change`, (e) => {
+        e.preventDefault();
+        const filt = e.target;
+        console.log(filt);
+      });
     }
 
     filteredFilms = filterFilms(allFilms, filterCaption);

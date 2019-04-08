@@ -3,6 +3,7 @@ import Component from './component';
 class StatsFilter extends Component {
   constructor() {
     super();
+   // this._watchedDate = data.watchedDate;
   }
 
   get template() {
