@@ -1,26 +1,16 @@
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
 import API from './api';
 import Filter from './filter';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
-import Stats from './stats';
-import StatsFilter from './stats-filter';
-import ChartOptions from './chart-options';
+import renderStats from './stats-controller';
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 
 const FILMS_AMOUNT_PER_PAGE = 5;
 const TOP_FILMS_AMOUNT = 2;
-const MIN_IN_HOUR = 60;
 const WATCHED_AMOUNT_LOW = 10;
 const WATCHED_AMOUNT_HIGH = 20;
-const MS_IN_DAY = 24 * 60 * 60 * 1000;
-const MS_IN_WEEK = 7 * MS_IN_DAY;
-const MS_IN_MONTH = 30 * MS_IN_DAY;
-const MS_IN_YEAR = 365 * MS_IN_DAY;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let allFilms;
 let allFilters;
@@ -33,38 +23,6 @@ const Filters = [
   [`Favorites`, true],
   [`Stats`, false, false, true]
 ];
-
-const statsCounters = {
-  filmsWatched: 0,
-  totalDuration: {
-    hours: 0,
-    min: 0,
-  },
-  genresWatched: {
-    'Sci-Fi': 0,
-    'Animation': 0,
-    'Comedy': 0,
-    'Family': 0,
-    'Adventure': 0,
-    'Action': 0,
-    'Drama': 0,
-    'Horror': 0,
-    'Thriller': 0,
-  },
-  ranks: {
-    'Sci-Fighter': `Sci-Fi`,
-    'Animation-Fan': `Animation`,
-    'Comedy-Lover': `Comedy`,
-    'Family-Amateur': `Family`,
-    'Adventure-Lover': `Adventure`,
-    'Action-Fan': `Action`,
-    'Drama-Lover': `Drama`,
-    'Horror-Buff': `Horror`,
-    'Thriller-Fan': `Thriller`,
-  },
-  topGenre: ``,
-  yourRank: ``,
-};
 
 const searchField = document.querySelector(`.search__field`);
 const mainContainer = document.querySelector(`.main`);
@@ -118,28 +76,6 @@ const getUserRank = () => {
     userRank = `movie buff`;
   }
   return userRank;
-};
-
-const getStartDate = (filter) => {
-  switch (filter) {
-    case `statistic-all-time`:
-      return 0;
-
-    case `statistic-year`:
-      return MS_IN_YEAR;
-
-    case `statistic-month`:
-      return MS_IN_MONTH;
-
-    case `statistic-week`:
-      return MS_IN_WEEK;
-
-    case `statistic-today`:
-      return MS_IN_DAY;
-
-    default:
-      return 0;
-  }
 };
 
 const filterFilms = (films, filterName) => {
@@ -202,91 +138,6 @@ const getEventFilter = (evt) => {
 const renderFilter = (data) => {
   const filter = new Filter(data);
   filterContainer.appendChild(filter.render());
-};
-
-const renderStats = (data, filterId) => {
-  // statsCounters.filmsWatched = countFilmsWatched();
-  statsCounters.filmsWatched = allFilms.reduce((acc, it) => (it.isWatched === true
-  && it.watchedDate > getStartDate(filterId)) ? acc + 1 : acc, 0);
-
-  statsCounters.totalDuration.hours = Math.floor(allFilms.reduce((acc, it) => (it.isWatched === true
-  && it.watchedDate > getStartDate(filterId)) ?
-    acc + it.duration : acc, 0) / MIN_IN_HOUR);
-
-  statsCounters.totalDuration.minutes = allFilms.reduce((acc, it) => (it.isWatched === true
-  && it.watchedDate > getStartDate(filterId)) ?
-    acc + it.duration : acc, 0) % MIN_IN_HOUR;
-
-  // const minDate = new Date().getTime() - (2 * 24 * 60 * 60 * 1000);
-  // console.log(minDate);
-  const filmsWatched = allFilms.filter((it) => it.isWatched === true &&
-   it.watchedDate > getStartDate(filterId));
-
-  const countFilmGenres = (genre) => {
-    statsCounters.genresWatched[genre] = filmsWatched
-    .reduce((acc, it) => [...it.genre].includes(genre) ?
-      acc + 1 : acc, 0);
-    return statsCounters.genresWatched[genre];
-  };
-
-  Object.keys(statsCounters.genresWatched).forEach((it) => countFilmGenres(it));
-
-  const filmsWatchedMax = Math.max(...Object.values(statsCounters.genresWatched));
-  let topGenre;
-  const getTopGenre = () => {
-
-    for (let prop in statsCounters.genresWatched) {
-      if (statsCounters.genresWatched[prop] === filmsWatchedMax) {
-        topGenre = prop;
-      }
-    }
-    return topGenre;
-  };
-
-  let rank;
-  const getYourRank = () => {
-
-    for (let prop in statsCounters.ranks) {
-      if (statsCounters.ranks[prop] === topGenre) {
-        rank = prop;
-      }
-    }
-    return rank;
-  };
-
-  statsCounters.topGenre = getTopGenre();
-  statsCounters.yourRank = getYourRank();
-
-  const stats = new Stats(data);
-
-  mainContainer.appendChild(stats.render());
-  const statsContainer = document.querySelector(`.statistic`);
-  const statsTextList = statsContainer.querySelector(`.statistic__text-list`);
-  statsContainer.classList.remove(`visually-hidden`);
-
-  const statsFilter = new StatsFilter();
-  statsContainer.insertBefore(statsFilter.render(), statsTextList);
-
-  const statisticCtx = document.querySelector(`.statistic__chart`);
-  const BAR_HEIGHT = 60;
-  statisticCtx.height = BAR_HEIGHT * 5;
-
-  const myChart = new Chart(statisticCtx, {
-    plugins: [ChartDataLabels],
-    type: `horizontalBar`,
-    data: {
-      labels: Object.keys(statsCounters.genresWatched),
-      datasets: [{
-        data: Object.values(statsCounters.genresWatched),
-        backgroundColor: `#ffe800`,
-        hoverBackgroundColor: `#ffe800`,
-        anchor: `start`
-      }]
-    },
-    options: ChartOptions,
-  });
-
-  statisticCtx.innerHTML = myChart;
 };
 
 const renderFilmCard = (container, filmData, boolean) => {
@@ -403,7 +254,6 @@ const updateFooterStatistik = (content) => {
   footerStatistik.innerHTML = `${content} movies inside`;
 };
 
-
 const init = () => {
 
   api.getFilms()
@@ -461,7 +311,6 @@ const init = () => {
     });
   });
 
-
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     const newFilter = evt.target;
@@ -483,22 +332,14 @@ const init = () => {
     }
 
     const filterCaption = getEventFilter(evt);
+    filteredFilms = filterFilms(allFilms, filterCaption);
 
     if (filterCaption === `stats`) {
       filmsContainer.classList.add(`visually-hidden`);
-      renderStats(statsCounters);
-
-      document.querySelector(`.statistic__filters`)
-      .addEventListener(`change`, (e) => {
-        e.preventDefault();
-        const currentStatsFilter = e.target.id;
-        console.log(currentStatsFilter);
-        //mainContainer.removeChild(mainContainer.lastChild);
-        renderStats(statsCounters, currentStatsFilter.id);
-      });
+      const filteredFilmsStats = filterFilms(allFilms, `history`);
+      console.log(filteredFilmsStats);
+      renderStats(filteredFilmsStats);
     }
-
-    filteredFilms = filterFilms(allFilms, filterCaption);
 
     if (filteredFilms.length > FILMS_AMOUNT_PER_PAGE &&
     nextPageButton.classList.contains(`visually-hidden`)) {
