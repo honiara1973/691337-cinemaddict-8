@@ -10,6 +10,7 @@ const MS_IN_DAY = 24 * 60 * 60 * 1000;
 const MS_IN_WEEK = 7 * MS_IN_DAY;
 const MS_IN_MONTH = 30 * MS_IN_DAY;
 const MS_IN_YEAR = 365 * MS_IN_DAY;
+const CTX_HEIGHT = 300;
 
 const mainContainer = document.querySelector(`.main`);
 
@@ -65,6 +66,27 @@ const getStartDate = (filter) => {
     default:
       return 0;
   }
+};
+
+const createChart = (container) => {
+
+  const myChart = new Chart(container, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: Object.keys(statsCounters.genresWatched),
+      datasets: [{
+        data: Object.values(statsCounters.genresWatched),
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: ChartOptions,
+  });
+
+  container.innerHTML = myChart;
+  return container.innerHTML;
 };
 
 const getStatsCounters = (array, filter) => {
@@ -129,10 +151,13 @@ const renderStats = (array) => {
   const statsTextList = statsContainer.querySelector(`.statistic__text-list`);
   statsContainer.classList.remove(`visually-hidden`);
 
-  const statisticCtx = document.querySelector(`.statistic__chart`);
-  const BAR_HEIGHT = 60;
-  statisticCtx.height = BAR_HEIGHT * 5;
 
+  const statisticCtx = document.querySelector(`.statistic__chart`);
+  //const BAR_HEIGHT = 60;
+  //statisticCtx.height = BAR_HEIGHT * 5;
+  statisticCtx.height = CTX_HEIGHT;
+
+  /*
   const myChart = new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -147,8 +172,10 @@ const renderStats = (array) => {
     },
     options: ChartOptions,
   });
+  */
 
-  statisticCtx.innerHTML = myChart;
+  createChart(statisticCtx);
+  //statisticCtx.innerHTML = myChart;
 
   const statsFilter = new StatsFilter();
   statsContainer.insertBefore(statsFilter.render(), statsTextList);
@@ -159,6 +186,7 @@ const renderStats = (array) => {
   const currentStatsFilter = evt.target.id;
   // console.log(currentStatsFilter);
   getStatsCounters(array, currentStatsFilter);
+  createChart(statisticCtx);
   stats._filmsWatched = statsCounters.filmsWatched;
   stats._totalDuration = statsCounters.totalDuration;
   stats._topGenre = statsCounters.topGenre;
