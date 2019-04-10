@@ -23,18 +23,27 @@ class FilmDetails extends Component {
     this._commentsCounter = data.commentsCounter;
     this._comments = data.comments;
     this._poster = data.poster;
+    this._isWatched = data.isWatched;
+    this._inWatchList = data.inWatchList;
+    this._isFavorite = data.isFavorite;
     this._onClose = null;
     this._onSendComment = null;
     this._onUndoComment = null;
     this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
+    this._onAddToWatchList = null;
+    this._onMarkAsWatched = null;
+    this._onAddToFavorite = null;
 
     this._onAddComment = this._onAddComment.bind(this);
     this._onDeleteComment = this._onDeleteComment.bind(this);
     this._onAddScore = this._onAddScore.bind(this);
     this._onEscEvent = this._onEscEvent.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+    this._addToWatchList = this._addToWatchList.bind(this);
+    this._markAsWatched = this._markAsWatched.bind(this);
+    this._addToFavorite = this._addToFavorite.bind(this);
   }
 
   _chooseEmotion(emotion) {
@@ -52,6 +61,15 @@ class FilmDetails extends Component {
       default:
         return ``;
     }
+  }
+
+  _processControls() {
+    const entry = {
+      isWatched: this._isWatched,
+      inWatchList: this._inWatchList,
+      isFavorite: this._isFavorite,
+    };
+    return entry;
   }
 
   _processForm(formData) {
@@ -74,6 +92,37 @@ class FilmDetails extends Component {
       }
     }
     return entry;
+  }
+
+  _addToWatchList() {
+    this._inWatchList = !this._inWatchList;
+    const newData = this._processControls();
+    if (typeof this._onAddToWatchList === `function`) {
+      this._onAddToWatchList(newData);
+    }
+    this.updateControls(newData);
+  }
+
+  _markAsWatched() {
+    console.log(`event`);
+    console.log(this._isWatched);
+    this._isWatched = !this._isWatched;
+   /* const newData = this._processControls();
+    if (typeof this._onMarkAsWatched === `function`) {
+      this._onMarkAsWatched(newData);
+    }
+    this.updateControls(newData);
+    */
+    console.log(this._isWatched);
+  }
+
+  _addToFavorite() {
+    this._isFavorite = !this._isFavorite;
+    const newData = this._processControls();
+    if (typeof this._onAddToFavorite === `function`) {
+      this._onAddToFavorite(newData);
+    }
+    this.updateControls(newData);
   }
 
   _onAddComment(evt) {
@@ -110,9 +159,15 @@ class FilmDetails extends Component {
   }
 
   _onCloseButtonClick() {
+    console.log(this._isWatched);
+    const newData = this._processControls();
+    console.log(newData);
+
     if (typeof this._onClose === `function`) {
       this._onClose();
     }
+    this.updateControls(newData);
+    console.log(this._isWatched);
   }
 
   _onEscEvent(evt) {
@@ -310,6 +365,12 @@ class FilmDetails extends Component {
     .addEventListener(`keydown`, this._onAddComment);
     this._element.querySelector(`.film-details__watched-reset`)
     .addEventListener(`click`, this._onDeleteComment);
+    this._element.querySelector(`#watchlist`)
+    .addEventListener(`click`, this._addToWatchList);
+    this._element.querySelector(`#watched`)
+    .addEventListener(`click`, this._markAsWatched);
+    this._element.querySelector(`#favorite`)
+    .addEventListener(`click`, this._addToFavorite);
   }
 
   removeListeners() {
@@ -323,6 +384,12 @@ class FilmDetails extends Component {
     .removeEventListener(`keydown`, this._onAddComment);
     this._element.querySelector(`.film-details__watched-reset`)
     .removeEventListener(`click`, this._onDeleteComment);
+    this._element.querySelector(`#watchlist`)
+    .removeEventListener(`click`, this._addToWatchList);
+    this._element.querySelector(`#watched`)
+    .removeEventListener(`click`, this._markAsWatched);
+    this._element.querySelector(`#favorite`)
+    .removeEventListener(`click`, this._addToFavorite);
   }
 
   partialUpdate(data) {
@@ -365,6 +432,12 @@ class FilmDetails extends Component {
       [...this._comments].concat(data.userComment) : this._comments;
     this._userScore = data.userScore;
     this._commentsCounter = data.commentsCounter;
+  }
+
+  updateControls(data) {
+    this._inWatchList = data.inWatchList;
+    this._isWatched = data.isWatched;
+    this._isFavorite = data.isFavorite;
   }
 
   shake(element) {

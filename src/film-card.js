@@ -20,11 +20,14 @@ class FilmCard extends Component {
     this._isWatched = data.isWatched;
     this._inWatchList = data.inWatchList;
     this._isFavorite = data.isFavorite;
+    this._onAddToWatchList = null;
+    this._onMarkAsWatched = null;
+    this._onAddToFavorite = null;
 
     this._onCommentsButtonClick = this._onCommentsButtonClick.bind(this);
-    this._onAddToWatchList = this._onAddToWatchList.bind(this);
-    this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
-    this._onAddToFavorite = this._onAddToFavorite.bind(this);
+    this._addToWatchList = this._addToWatchList.bind(this);
+    this._markAsWatched = this._markAsWatched.bind(this);
+    this._addToFavorite = this._addToFavorite.bind(this);
   }
 
   _processControls() {
@@ -42,34 +45,34 @@ class FilmCard extends Component {
     }
   }
 
-  _onAddToWatchList(evt) {
+  _addToWatchList(evt) {
     evt.preventDefault();
     this._inWatchList = !this._inWatchList;
     const newData = this._processControls();
     if (typeof this._onAddToWatchList === `function`) {
       this._onAddToWatchList(newData);
     }
-    this.update(newData);
+    this.updateControls(newData);
   }
 
-  _onMarkAsWatched(evt) {
+  _markAsWatched(evt) {
     evt.preventDefault();
     this._isWatched = !this._isWatched;
     const newData = this._processControls();
     if (typeof this._onMarkAsWatched === `function`) {
       this._onMarkAsWatched(newData);
     }
-    this.update(newData);
+    this.updateControls(newData);
   }
 
-  _onAddToFavorite(evt) {
+  _addToFavorite(evt) {
     evt.preventDefault();
     this._isFavorite = !this._isFavorite;
     const newData = this._processControls();
     if (typeof this._onAddToFavorite === `function`) {
       this._onAddToFavorite(newData);
     }
-    this.update(newData);
+    this.updateControls(newData);
   }
 
   set onComments(fn) {
@@ -139,7 +142,7 @@ class FilmCard extends Component {
     return super.render();
   }
 
-  update(data) {
+  updateControls(data) {
     this._inWatchList = data.inWatchList;
     this._isWatched = data.isWatched;
     this._isFavorite = data.isFavorite;
@@ -151,11 +154,11 @@ class FilmCard extends Component {
 
     if (this._onControls) {
       this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
-    .addEventListener(`click`, this._onAddToWatchList);
+    .addEventListener(`click`, this._addToWatchList);
       this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
-    .addEventListener(`click`, this._onMarkAsWatched);
+    .addEventListener(`click`, this._markAsWatched);
       this._element.querySelector(`.film-card__controls-item--favorite`)
-    .addEventListener(`click`, this._onAddToFavorite);
+    .addEventListener(`click`, this._addToFavorite);
     }
   }
 }

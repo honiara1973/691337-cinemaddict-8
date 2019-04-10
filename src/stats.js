@@ -43,7 +43,7 @@ class Stats extends Component {
   partialUpdate() {
     this._element.querySelector(`.watched`).innerHTML =
     `${this._filmsWatched} <span class="statistic__item-description">movies</span>`;
-    console.log(this._filmsWatched);
+    //console.log(this._filmsWatched);
     this._element.querySelector(`.duration`).innerHTML =
     `${this._totalDuration.hours}
     <span class="statistic__item-description">h</span> 

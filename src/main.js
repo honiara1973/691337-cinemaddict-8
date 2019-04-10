@@ -160,12 +160,44 @@ const renderFilmCard = (container, filmData, boolean) => {
   };
 
   film.onMarkAsWatched = (newObject) => {
+    console.log(filmData.isWatched);
+    filmData.isWatched = newObject.isWatched;
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.updateControls(newFilmData);
+      filmDetails.updateControls(newFilmData);
+      document.querySelector(`a[href=history] .main-navigation__item-count`)
+    .innerHTML = countFilmsWatched();
+      updateRankField(getUserRank());
+      console.log(newFilmData.isWatched);
+    });
+  };
+
+  /*
+  filmDetails.onMarkAsWatched = (newObject) => {
+    console.log(filmData.isWatched);
+    filmData.isWatched = newObject.isWatched;
+    console.log(filmData.isWatched);
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.updateControls(newFilmData);
+      filmDetails.updateControls(newFilmData);
+      document.querySelector(`a[href=history] .main-navigation__item-count`)
+    .innerHTML = countFilmsWatched();
+      updateRankField(getUserRank());
+      console.log(newFilmData.isWatched);
+    });
+  };
+  */
+  /*
+  film.onMarkAsWatched = (newObject) => {
     filmData.isWatched = newObject.isWatched;
     console.log(filmData.isWatched);
     document.querySelector(`a[href=history] .main-navigation__item-count`)
     .innerHTML = countFilmsWatched();
     updateRankField(getUserRank());
   };
+  */
 
   film.onAddToFavorite = (newObject) => {
     filmData.isFavorite = newObject.isFavorite;
@@ -218,8 +250,18 @@ const renderFilmCard = (container, filmData, boolean) => {
   };
 
   filmDetails.onClose = () => {
-    document.body.removeChild(document.body.lastChild);
-    filmDetails.unrender();
+   /* filmData.isWatched = newObject.isWatched;
+      api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.updateControls(newFilmData);
+      filmDetails.updateControls(newFilmData);
+      document.querySelector(`a[href=history] .main-navigation__item-count`)
+    .innerHTML = countFilmsWatched();
+      updateRankField(getUserRank());
+      console.log(newFilmData.isWatched);*/
+      document.body.removeChild(document.body.lastChild);
+      filmDetails.unrender();
+  //  });
   };
 };
 

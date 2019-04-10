@@ -102,7 +102,7 @@ const getStatsCounters = (array, filter) => {
   // const minDate = new Date().getTime() - (2 * 24 * 60 * 60 * 1000);
   // console.log(minDate);
   const filmsWatchedInPeriod = array.filter((it) => it.watchedDate > getStartDate(filter));
-  console.log(filmsWatchedInPeriod);
+  //console.log(filmsWatchedInPeriod);
 
   const countFilmGenres = (genre) => {
     statsCounters.genresWatched[genre] = filmsWatchedInPeriod
@@ -111,7 +111,7 @@ const getStatsCounters = (array, filter) => {
     return statsCounters.genresWatched[genre];
   };
 
-  console.log(statsCounters.genresWatched);
+  //console.log(statsCounters.genresWatched);
   Object.keys(statsCounters.genresWatched).forEach((it) => countFilmGenres(it));
 
   const filmsWatchedMax = Math.max(...Object.values(statsCounters.genresWatched));
