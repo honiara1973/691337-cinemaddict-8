@@ -198,13 +198,16 @@ const renderFilmCard = (container, filmData, boolean) => {
     const commentInput = document.querySelector(`.film-details__comment-input`);
     commentInput.disabled = true;
     commentInput.style.border = null;
-    filmData.userComment = newObject.userComment;
-    filmData.commentsCounter = newObject.commentsCounter;
+    filmData.comments = [...filmData.comments].concat(newObject.userComment);
+    console.log(filmData.comments);
+    //filmData.userComment = newObject.userComment;
+    //filmData.commentsCounter = newObject.commentsCounter;
     film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
+      console.log(newFilmData);
       commentInput.disabled = false;
-      film.update(newFilmData);
+      //film.update(newFilmData);
       filmDetails.partialUpdate(`comments`);
     })
     .catch(() => {

@@ -115,11 +115,13 @@ class FilmDetails extends Component {
 
   _onAddComment(evt) {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
+      console.log(this._comments); // массив объектов
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
-      newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
-        this._commentsCounter += 1 : this._commentsCounter;
-
+      //newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
+        //this._commentsCounter += 1 : this._commentsCounter;
+      console.log(this._comments); // массив объектов
+      console.log(newData); // объект с 2 ключами: userComment: {}, userScore: ``
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
@@ -270,7 +272,7 @@ class FilmDetails extends Component {
       ${this._inWatchList === true ? `checked` : ``}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" 
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched"
       ${this._isWatched === true ? `checked` : ``}>
       <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
