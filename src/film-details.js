@@ -32,18 +32,18 @@ class FilmDetails extends Component {
     this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
-    this._onAddToWatchList = null;
-    this._onMarkAsWatched = null;
-    this._onAddToFavorite = null;
+    //this._onAddToWatchList = null;
+    //this._onMarkAsWatched = null;
+    //this._onAddToFavorite = null;
 
     this._onAddComment = this._onAddComment.bind(this);
     this._onDeleteComment = this._onDeleteComment.bind(this);
     this._onAddScore = this._onAddScore.bind(this);
     this._onEscEvent = this._onEscEvent.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
-    this._addToWatchList = this._addToWatchList.bind(this);
-    this._markAsWatched = this._markAsWatched.bind(this);
-    this._addToFavorite = this._addToFavorite.bind(this);
+    this._onChangeToWatchList = this._onChangeToWatchList.bind(this);
+    this._onChangeWatched = this._onChangeWatched.bind(this);
+    this._onChangeToFavorite = this._onChangeToFavorite.bind(this);
   }
 
   _chooseEmotion(emotion) {
@@ -94,20 +94,20 @@ class FilmDetails extends Component {
     return entry;
   }
 
-  _addToWatchList() {
+  _onChangeToWatchList() {
     console.log(this._inWatchList);
     this._inWatchList = !this._inWatchList;
     console.log(this._inWatchList);
   }
 
-  _markAsWatched() {
+  _onChangeWatched() {
     console.log(`event`);
     console.log(this._isWatched);
     this._isWatched = !this._isWatched;
     console.log(this._isWatched);
   }
 
-  _addToFavorite() {
+  _onChangeToFavorite() {
     console.log(this._isFavorite);
     this._isFavorite = !this._isFavorite;
     console.log(this._isFavorite);
@@ -266,13 +266,16 @@ class FilmDetails extends Component {
     </div>
 
     <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist"
+      ${this._inWatchList === true ? `checked` : ``}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" checked>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" 
+      ${this._isWatched === true ? `checked` : ``}>
       <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite"
+      ${this._isFavorite === true ? `checked` : ``}>
       <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
     </section>
 
@@ -355,11 +358,11 @@ class FilmDetails extends Component {
     this._element.querySelector(`.film-details__watched-reset`)
     .addEventListener(`click`, this._onDeleteComment);
     this._element.querySelector(`#watchlist`)
-    .addEventListener(`click`, this._addToWatchList);
+    .addEventListener(`click`, this._onChangeToWatchList);
     this._element.querySelector(`#watched`)
-    .addEventListener(`click`, this._markAsWatched);
+    .addEventListener(`click`, this._onChangeWatched);
     this._element.querySelector(`#favorite`)
-    .addEventListener(`click`, this._addToFavorite);
+    .addEventListener(`click`, this._onChangeToFavorite);
   }
 
   removeListeners() {
@@ -374,11 +377,11 @@ class FilmDetails extends Component {
     this._element.querySelector(`.film-details__watched-reset`)
     .removeEventListener(`click`, this._onDeleteComment);
     this._element.querySelector(`#watchlist`)
-    .removeEventListener(`click`, this._addToWatchList);
+    .removeEventListener(`click`, this._onChangeToWatchList);
     this._element.querySelector(`#watched`)
-    .removeEventListener(`click`, this._markAsWatched);
+    .removeEventListener(`click`, this._onChangeWatched);
     this._element.querySelector(`#favorite`)
-    .removeEventListener(`click`, this._addToFavorite);
+    .removeEventListener(`click`, this._onChangeToFavorite);
   }
 
   partialUpdate(data) {

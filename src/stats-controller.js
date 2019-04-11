@@ -68,6 +68,12 @@ const getStartDate = (filter) => {
   }
 };
 
+const updateChartData = (chart) => {
+  chart.data.datasets[0].data = Object.values(statsCounters.genresWatched);
+  chart.update();
+};
+
+/*
 const createChart = (container) => {
 
   const myChart = new Chart(container, {
@@ -88,6 +94,7 @@ const createChart = (container) => {
   container.innerHTML = myChart;
   return container.innerHTML;
 };
+*/
 
 const getStatsCounters = (array, filter) => {
   statsCounters.filmsWatched = array.reduce((acc, it) => it.watchedDate > getStartDate(filter) ?
@@ -99,10 +106,7 @@ const getStatsCounters = (array, filter) => {
   statsCounters.totalDuration.minutes = array.reduce((acc, it) => it.watchedDate > getStartDate(filter) ?
     acc + it.duration : acc, 0) % MIN_IN_HOUR;
 
-  // const minDate = new Date().getTime() - (2 * 24 * 60 * 60 * 1000);
-  // console.log(minDate);
   const filmsWatchedInPeriod = array.filter((it) => it.watchedDate > getStartDate(filter));
-  //console.log(filmsWatchedInPeriod);
 
   const countFilmGenres = (genre) => {
     statsCounters.genresWatched[genre] = filmsWatchedInPeriod
@@ -111,7 +115,6 @@ const getStatsCounters = (array, filter) => {
     return statsCounters.genresWatched[genre];
   };
 
-  //console.log(statsCounters.genresWatched);
   Object.keys(statsCounters.genresWatched).forEach((it) => countFilmGenres(it));
 
   const filmsWatchedMax = Math.max(...Object.values(statsCounters.genresWatched));
@@ -151,13 +154,8 @@ const renderStats = (array) => {
   const statsTextList = statsContainer.querySelector(`.statistic__text-list`);
   statsContainer.classList.remove(`visually-hidden`);
 
-
   const statisticCtx = document.querySelector(`.statistic__chart`);
-  //const BAR_HEIGHT = 60;
-  //statisticCtx.height = BAR_HEIGHT * 5;
   statisticCtx.height = CTX_HEIGHT;
-
-  /*
   const myChart = new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -172,28 +170,23 @@ const renderStats = (array) => {
     },
     options: ChartOptions,
   });
-  */
-
-  createChart(statisticCtx);
-  //statisticCtx.innerHTML = myChart;
+  statisticCtx.innerHTML = myChart;
 
   const statsFilter = new StatsFilter();
   statsContainer.insertBefore(statsFilter.render(), statsTextList);
 
   document.querySelector(`.statistic__filters`)
-.addEventListener(`change`, (evt) => {
-  evt.preventDefault();
-  const currentStatsFilter = evt.target.id;
-  // console.log(currentStatsFilter);
-  getStatsCounters(array, currentStatsFilter);
-  createChart(statisticCtx);
-  stats._filmsWatched = statsCounters.filmsWatched;
-  stats._totalDuration = statsCounters.totalDuration;
-  stats._topGenre = statsCounters.topGenre;
-  stats._yourRank = statsCounters.yourRank;
-  stats.partialUpdate();
-});
+  .addEventListener(`change`, (evt) => {
+    evt.preventDefault();
+    const currentStatsFilter = evt.target.id;
+    getStatsCounters(array, currentStatsFilter);
+    updateChartData(myChart);
+    stats._filmsWatched = statsCounters.filmsWatched;
+    stats._totalDuration = statsCounters.totalDuration;
+    stats._topGenre = statsCounters.topGenre;
+    stats._yourRank = statsCounters.yourRank;
+    stats.partialUpdate();
+  });
 };
-
 
 export default renderStats;
