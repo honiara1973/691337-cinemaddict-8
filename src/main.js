@@ -154,9 +154,16 @@ const renderFilmCard = (container, filmData, boolean) => {
   };
 
   film.onAddToWatchList = (newObject) => {
+    console.log(filmData.inWatchList);
     filmData.inWatchList = newObject.inWatchList;
-    document.querySelector(`a[href=watchlist] .main-navigation__item-count`)
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.updateControls(newFilmData);
+      filmDetails.updateControls(newFilmData);
+      document.querySelector(`a[href=watchlist] .main-navigation__item-count`)
     .innerHTML = countFilmsInWatchList();
+      console.log(newFilmData.inWatchList);
+    });
   };
 
   film.onMarkAsWatched = (newObject) => {
@@ -172,37 +179,18 @@ const renderFilmCard = (container, filmData, boolean) => {
       console.log(newFilmData.isWatched);
     });
   };
-
-  /*
-  filmDetails.onMarkAsWatched = (newObject) => {
-    console.log(filmData.isWatched);
-    filmData.isWatched = newObject.isWatched;
-    console.log(filmData.isWatched);
-    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
-    .then((newFilmData) => {
-      film.updateControls(newFilmData);
-      filmDetails.updateControls(newFilmData);
-      document.querySelector(`a[href=history] .main-navigation__item-count`)
-    .innerHTML = countFilmsWatched();
-      updateRankField(getUserRank());
-      console.log(newFilmData.isWatched);
-    });
-  };
-  */
-  /*
-  film.onMarkAsWatched = (newObject) => {
-    filmData.isWatched = newObject.isWatched;
-    console.log(filmData.isWatched);
-    document.querySelector(`a[href=history] .main-navigation__item-count`)
-    .innerHTML = countFilmsWatched();
-    updateRankField(getUserRank());
-  };
-  */
 
   film.onAddToFavorite = (newObject) => {
+    console.log(filmData.isFavorite);
     filmData.isFavorite = newObject.isFavorite;
-    document.querySelector(`a[href=favorites] .main-navigation__item-count`)
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+    .then((newFilmData) => {
+      film.updateControls(newFilmData);
+      filmDetails.updateControls(newFilmData);
+      document.querySelector(`a[href=favorites] .main-navigation__item-count`)
     .innerHTML = countFilmsFavorite();
+      console.log(newFilmData.isFavorite);
+    });
   };
 
   filmDetails.onSendComment = (newObject) => {
@@ -249,19 +237,25 @@ const renderFilmCard = (container, filmData, boolean) => {
     });
   };
 
-  filmDetails.onClose = () => {
-   /* filmData.isWatched = newObject.isWatched;
-      api.updateFilm({id: filmData.id, data: filmData.toRAW()})
+  filmDetails.onClose = (newObject) => {
+    filmData.inWatchList = newObject.inWatchList;
+    filmData.isWatched = newObject.isWatched;
+    filmData.isFavorite = newObject.isFavorite;
+    api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
       film.updateControls(newFilmData);
       filmDetails.updateControls(newFilmData);
+      document.querySelector(`a[href=watchlist] .main-navigation__item-count`)
+    .innerHTML = countFilmsInWatchList();
       document.querySelector(`a[href=history] .main-navigation__item-count`)
     .innerHTML = countFilmsWatched();
+      document.querySelector(`a[href=favorites] .main-navigation__item-count`)
+    .innerHTML = countFilmsFavorite();
       updateRankField(getUserRank());
-      console.log(newFilmData.isWatched);*/
+      console.log(newFilmData.isWatched);
       document.body.removeChild(document.body.lastChild);
       filmDetails.unrender();
-  //  });
+    });
   };
 };
 

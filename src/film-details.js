@@ -95,34 +95,22 @@ class FilmDetails extends Component {
   }
 
   _addToWatchList() {
+    console.log(this._inWatchList);
     this._inWatchList = !this._inWatchList;
-    const newData = this._processControls();
-    if (typeof this._onAddToWatchList === `function`) {
-      this._onAddToWatchList(newData);
-    }
-    this.updateControls(newData);
+    console.log(this._inWatchList);
   }
 
   _markAsWatched() {
     console.log(`event`);
     console.log(this._isWatched);
     this._isWatched = !this._isWatched;
-   /* const newData = this._processControls();
-    if (typeof this._onMarkAsWatched === `function`) {
-      this._onMarkAsWatched(newData);
-    }
-    this.updateControls(newData);
-    */
     console.log(this._isWatched);
   }
 
   _addToFavorite() {
+    console.log(this._isFavorite);
     this._isFavorite = !this._isFavorite;
-    const newData = this._processControls();
-    if (typeof this._onAddToFavorite === `function`) {
-      this._onAddToFavorite(newData);
-    }
-    this.updateControls(newData);
+    console.log(this._isFavorite);
   }
 
   _onAddComment(evt) {
@@ -131,7 +119,7 @@ class FilmDetails extends Component {
       const newData = this._processForm(formData);
       newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
         this._commentsCounter += 1 : this._commentsCounter;
-        
+
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
@@ -164,15 +152,16 @@ class FilmDetails extends Component {
     console.log(newData);
 
     if (typeof this._onClose === `function`) {
-      this._onClose();
+      this._onClose(newData);
     }
-    this.updateControls(newData);
+    // this.updateControls(newData);
     console.log(this._isWatched);
   }
 
   _onEscEvent(evt) {
+    const newData = this._processControls();
     if ((evt.keyCode === ESC_KEYCODE) && (typeof this._onClose === `function`)) {
-      this._onClose();
+      this._onClose(newData);
     }
   }
 
