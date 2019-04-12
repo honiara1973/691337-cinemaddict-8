@@ -1,7 +1,6 @@
 import Component from './component';
 import * as moment from 'moment';
 
-//const RATING_SCORES = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
 const RATING_SCORES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const ENTER_KEYCODE = 13;
 const ESC_KEYCODE = 27;
@@ -33,9 +32,6 @@ class FilmDetails extends Component {
     this._onVoting = null;
     this._userComment = {};
     this._userScore = data.userScore;
-    // this._onAddToWatchList = null;
-    // this._onMarkAsWatched = null;
-    // this._onAddToFavorite = null;
 
     this._onAddComment = this._onAddComment.bind(this);
     this._onDeleteComment = this._onDeleteComment.bind(this);
@@ -96,33 +92,21 @@ class FilmDetails extends Component {
   }
 
   _onChangeToWatchList() {
-    console.log(this._inWatchList);
     this._inWatchList = !this._inWatchList;
-    console.log(this._inWatchList);
   }
 
   _onChangeWatched() {
-    console.log(`event`);
-    console.log(this._isWatched);
     this._isWatched = !this._isWatched;
-    console.log(this._isWatched);
   }
 
   _onChangeToFavorite() {
-    console.log(this._isFavorite);
     this._isFavorite = !this._isFavorite;
-    console.log(this._isFavorite);
   }
 
   _onAddComment(evt) {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
-      console.log(this._comments); // массив объектов
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
-      // newData[`commentsCounter`] = newData.userComment.comment.length > 0 ?
-      // this._commentsCounter += 1 : this._commentsCounter;
-      console.log(this._comments); // массив объектов
-      console.log(newData); // объект с 2 ключами: userComment: {}, userScore: ``
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
@@ -133,8 +117,6 @@ class FilmDetails extends Component {
   _onDeleteComment() {
     this._comments.pop();
     const newData = this._comments;
-    console.log(newData);
-   // this._commentsCounter = this._comments.length;
     if (typeof this._onUndoComment === `function`) {
       this._onUndoComment(newData);
     }
@@ -142,28 +124,17 @@ class FilmDetails extends Component {
 
   _onAddScore(evt) {
     this._userScore = evt.target.value;
-    //console.log(this._userScore);
-    //const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-    //const newData = this._processForm(formData);
-    //newData[`commentsCounter`] = this._commentsCounter;
     const newData = this._userScore;
-    //console.log(newData);
     if (typeof this._onVoting === `function`) {
-    this._onVoting(newData);
+      this._onVoting(newData);
     }
-    //this.update(newData);
   }
 
   _onCloseButtonClick() {
-    console.log(this._isWatched);
     const newData = this._processControls();
-    console.log(newData);
-
     if (typeof this._onClose === `function`) {
       this._onClose(newData);
     }
-    // this.updateControls(newData);
-    console.log(this._isWatched);
   }
 
   _onEscEvent(evt) {
@@ -205,7 +176,6 @@ class FilmDetails extends Component {
   </li>
     `);
   }
-
 
   get template() {
     return `
@@ -351,7 +321,8 @@ class FilmDetails extends Component {
       </div>
     </section>
   </form>
-</section>`.trim();
+</section>
+`.trim();
   }
 
   createListeners() {
@@ -428,11 +399,8 @@ class FilmDetails extends Component {
   }
 
   update(data) {
-    // this._comments = data.userComment.comment.length > 0 ?
-    //   [...this._comments].concat(data.userComment) : this._comments;
     this._comments = data.comments;
     this._userScore = data.userScore;
-    //console.log(this._userScore);
     this._commentsCounter = data.commentsCounter;
   }
 

@@ -199,15 +199,9 @@ const renderFilmCard = (container, filmData, boolean) => {
     commentInput.disabled = true;
     commentInput.style.border = null;
     filmData.comments = [...filmData.comments].concat(newObject.userComment);
-    console.log(filmData.comments);
-    //filmData.userComment = newObject.userComment;
-    //filmData.commentsCounter = newObject.commentsCounter;
-    film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
-      console.log(newFilmData);
       commentInput.disabled = false;
-      //film.update(newFilmData);
       film.partialUpdate(newFilmData);
       filmDetails.update(newFilmData);
       filmDetails.partialUpdate(`comments`);
@@ -221,14 +215,10 @@ const renderFilmCard = (container, filmData, boolean) => {
 
   filmDetails.onUndoComment = (newObject) => {
     filmData.comments = newObject;
-    console.log(filmData.comments);
-    //film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
       film.partialUpdate(newFilmData);
       filmDetails.update(newFilmData);
-      //film.update(newFilmData);
-      //film.partialUpdate(newFilmData);
       filmDetails.partialUpdate(`undoComment`);
     });
   };
@@ -240,7 +230,6 @@ const renderFilmCard = (container, filmData, boolean) => {
     .then((newFilmData) => {
       filmDetails.update(newFilmData);
       filmDetails.partialUpdate(`score`);
-      //film.update(newFilmData);
     })
     .catch(() => {
       filmDetails.shake(ratingScoreContainer);
@@ -262,7 +251,6 @@ const renderFilmCard = (container, filmData, boolean) => {
       document.querySelector(`a[href=favorites] .main-navigation__item-count`)
     .innerHTML = countFilmsFavorite();
       updateRankField(getUserRank());
-      console.log(newFilmData.isWatched);
       document.body.removeChild(document.body.lastChild);
       filmDetails.unrender();
     });
@@ -306,7 +294,6 @@ const init = () => {
   .then((it) => {
     allFilms = it;
     console.log(allFilms);
-    console.log(allFilms[0].watchedDate);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -383,7 +370,6 @@ const init = () => {
     if (filterCaption === `stats`) {
       filmsContainer.classList.add(`visually-hidden`);
       const filteredFilmsStats = filterFilms(allFilms, `history`);
-      console.log(filteredFilmsStats);
       renderStats(filteredFilmsStats);
     }
 
