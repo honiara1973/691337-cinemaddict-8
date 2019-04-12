@@ -208,6 +208,8 @@ const renderFilmCard = (container, filmData, boolean) => {
       console.log(newFilmData);
       commentInput.disabled = false;
       //film.update(newFilmData);
+      film.partialUpdate(newFilmData);
+      filmDetails.update(newFilmData);
       filmDetails.partialUpdate(`comments`);
     })
     .catch(() => {
@@ -217,23 +219,28 @@ const renderFilmCard = (container, filmData, boolean) => {
     });
   };
 
-  filmDetails.onUndoComment = () => {
-    film.partialUpdate(filmData);
+  filmDetails.onUndoComment = (newObject) => {
+    filmData.comments = newObject;
+    console.log(filmData.comments);
+    //film.partialUpdate(filmData);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
-      film.update(newFilmData);
       film.partialUpdate(newFilmData);
+      filmDetails.update(newFilmData);
+      //film.update(newFilmData);
+      //film.partialUpdate(newFilmData);
       filmDetails.partialUpdate(`undoComment`);
     });
   };
 
-  filmDetails.onVoting = (newObject) => {
+  filmDetails.onVoting = (newScore) => {
     const ratingScoreContainer = document.querySelector(`.film-details__user-rating-score`);
-    filmData.userScore = newObject.userScore;
+    filmData.userScore = newScore;
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
+      filmDetails.update(newFilmData);
       filmDetails.partialUpdate(`score`);
-      film.update(newFilmData);
+      //film.update(newFilmData);
     })
     .catch(() => {
       filmDetails.shake(ratingScoreContainer);
