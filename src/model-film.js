@@ -24,6 +24,7 @@ class ModelFilm {
     this.inWatchList = data[`user_details`][`watchlist`];
     this.isFavorite = data[`user_details`][`favorite`];
     this.userScore = Math.floor(data[`user_details`][`personal_rating`]);
+    this.watchedDate = data[`user_details`][`watching_date`] || ``;
   }
 
   toRAW() {

@@ -17,19 +17,19 @@ class Stats extends Component {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-         <p class="statistic__item-text">${this._filmsWatched}
+         <p class="statistic__item-text watched">${this._filmsWatched}
           <span class="statistic__item-description">movies</span>
          </p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${this._totalDuration.hours}
+        <p class="statistic__item-text duration">${this._totalDuration.hours}
         <span class="statistic__item-description">h</span>${this._totalDuration.min}
         <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${this._topGenre}</p>
+        <p class="statistic__item-text genre">${this._topGenre}</p>
       </li>
     </ul>
 
@@ -38,6 +38,18 @@ class Stats extends Component {
     </div>
   </section>
   `.trim();
+  }
+
+  partialUpdate() {
+    this._element.querySelector(`.watched`).innerHTML =
+    `${this._filmsWatched} <span class="statistic__item-description">movies</span>`;
+    this._element.querySelector(`.duration`).innerHTML =
+    `${this._totalDuration.hours}
+    <span class="statistic__item-description">h</span>
+    ${this._totalDuration.min}
+    <span class="statistic__item-description">m</span>`;
+    this._element.querySelector(`.genre`).innerHTML = this._topGenre;
+    this._element.querySelector(`.statistic__rank-label`).innerHTML = this._yourRank;
   }
 }
 

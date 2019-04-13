@@ -1,4 +1,4 @@
-const chartOptions = {
+const СhartOptions = {
   plugins: {
     datalabels: {
       font: {
@@ -42,4 +42,4 @@ const chartOptions = {
   }
 };
 
-export default chartOptions;
+export default СhartOptions;
