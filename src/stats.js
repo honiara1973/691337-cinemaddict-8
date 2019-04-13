@@ -43,15 +43,13 @@ class Stats extends Component {
   partialUpdate() {
     this._element.querySelector(`.watched`).innerHTML =
     `${this._filmsWatched} <span class="statistic__item-description">movies</span>`;
-    //console.log(this._filmsWatched);
     this._element.querySelector(`.duration`).innerHTML =
     `${this._totalDuration.hours}
-    <span class="statistic__item-description">h</span> 
+    <span class="statistic__item-description">h</span>
     ${this._totalDuration.min}
     <span class="statistic__item-description">m</span>`;
     this._element.querySelector(`.genre`).innerHTML = this._topGenre;
-    this._element.querySelector(`.statistic__rank-label`).innerHTML =
-    this._yourRank;
+    this._element.querySelector(`.statistic__rank-label`).innerHTML = this._yourRank;
   }
 }
 

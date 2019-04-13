@@ -96,11 +96,8 @@ class FilmCard extends Component {
   get template() {
     return `
     <article
-     ${this._onControls ?
-    `class="film-card"
-    ` : `
-    class="film-card film-card--no-controls"
-    `}>
+     ${this._onControls ? `
+     class="film-card"` : `class="film-card film-card--no-controls"`}>
       <h3 class="film-card__title">${this._name}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
@@ -112,9 +109,8 @@ class FilmCard extends Component {
        </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
       ${this._onControls ? `
-        <p class="film-card__description">
-         ${this._descr}</p>
-         ` : ``}
+      <p class="film-card__description">${this._descr}</p>
+      ` : ``}
       <button class="film-card__comments">${this._commentsCounter} comments</button>
       ${this._onControls ? `
       <form class="film-card__controls">

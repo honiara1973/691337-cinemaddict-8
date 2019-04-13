@@ -1,9 +1,11 @@
-import Component from './component';
 import * as moment from 'moment';
+import Component from './component';
 
 const RATING_SCORES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const ENTER_KEYCODE = 13;
 const ESC_KEYCODE = 27;
+const ANIMATION_DURATION = 100;
+const ANIMATION_AMOUNT = 10;
 
 class FilmDetails extends Component {
   constructor(data) {
@@ -196,23 +198,19 @@ class FilmDetails extends Component {
     <div class="film-details__info-wrap">
       <div class="film-details__poster">
         <img class="film-details__poster-img" src="${this._poster}" alt="${this._name}">
-
         <p class="film-details__age">Age: ${this._age === `` ? `0` : `${this._age}`}+</p>
       </div>
-
       <div class="film-details__info">
         <div class="film-details__info-head">
           <div class="film-details__title-wrap">
             <h3 class="film-details__title">${this._name}</h3>
             <p class="film-details__title-original">Original: ${this._originalName}</p>
           </div>
-
           <div class="film-details__rating">
             <p class="film-details__total-rating">${this._rating}</p>
             <p class="film-details__user-rating">Your rate ${this._userScore}</p>
           </div>
         </div>
-
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
@@ -246,77 +244,60 @@ class FilmDetails extends Component {
           </td>
           </tr>
         </table>
-
         <p class="film-details__film-description">${this._descr}
         </p>
       </div>
     </div>
-
     <section class="film-details__controls">
       <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist"
       ${this._inWatchList === true ? `checked` : ``}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
       <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched"
       ${this._isWatched === true ? `checked` : ``}>
       <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
       <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite"
       ${this._isFavorite === true ? `checked` : ``}>
       <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
     </section>
-
     <section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">Comments
       <span class="film-details__comments-count">${this._commentsCounter}</span>
       </h3>
-
       <ul class="film-details__comments-list">
      ${this._getCommentsTemplate()}
       </ul>
-
       <div class="film-details__new-comment">
         <div>
           <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
           <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
-
           <div class="film-details__emoji-list">
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
             <label class="film-details__emoji-label" for="emoji-sleeping">😴</label>
-
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-neutral-face" value="neutral-face" checked>
             <label class="film-details__emoji-label" for="emoji-neutral-face">😐</label>
-
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-grinning" value="grinning">
             <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
           </div>
         </div>
-
-
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input"
           placeholder="← Select reaction, add comment here" name="comment"></textarea>
         </label>
       </div>
     </section>
-
     <section class="film-details__user-rating-wrap">
       <div class="film-details__user-rating-controls">
         <span class="film-details__watched-status film-details__watched-status--active">
         ${this._isWatched === true ? `already watched` : ``}</span>
         <button class="film-details__watched-reset visually-hidden" type="button">undo</button>
       </div>
-
       <div class="film-details__user-score">
         <div class="film-details__user-rating-poster">
           <img src="images/posters/blackmail.jpg" alt="film-poster" class="film-details__user-rating-img">
         </div>
-
         <section class="film-details__user-rating-inner">
           <h3 class="film-details__user-rating-title">${this._name}</h3>
-
           <p class="film-details__user-rating-feelings">How you feel it?</p>
-
           <div class="film-details__user-rating-score">
           ${RATING_SCORES
           .map((it) => `
@@ -326,7 +307,6 @@ class FilmDetails extends Component {
           <label class="film-details__user-rating-label" for="rating-${it}">${it}</label>
          `).join(``)}
           </div>
-
         </section>
       </div>
     </section>
@@ -435,8 +415,8 @@ class FilmDetails extends Component {
       {transform: `translateY(0px)`},
       {transform: `translateY(-30px)`}
     ], {
-      duration: 100,
-      iterations: 10
+      duration: ANIMATION_DURATION,
+      iterations: ANIMATION_AMOUNT
     });
   }
 

@@ -73,29 +73,6 @@ const updateChartData = (chart) => {
   chart.update();
 };
 
-/*
-const createChart = (container) => {
-
-  const myChart = new Chart(container, {
-    plugins: [ChartDataLabels],
-    type: `horizontalBar`,
-    data: {
-      labels: Object.keys(statsCounters.genresWatched),
-      datasets: [{
-        data: Object.values(statsCounters.genresWatched),
-        backgroundColor: `#ffe800`,
-        hoverBackgroundColor: `#ffe800`,
-        anchor: `start`
-      }]
-    },
-    options: ChartOptions,
-  });
-
-  container.innerHTML = myChart;
-  return container.innerHTML;
-};
-*/
-
 const getStatsCounters = (array, filter) => {
   statsCounters.filmsWatched = array.reduce((acc, it) => it.watchedDate > getStartDate(filter) ?
     acc + 1 : acc, 0);
@@ -120,7 +97,6 @@ const getStatsCounters = (array, filter) => {
   const filmsWatchedMax = Math.max(...Object.values(statsCounters.genresWatched));
   let topGenre;
   const getTopGenre = () => {
-
     for (let prop in statsCounters.genresWatched) {
       if (statsCounters.genresWatched[prop] === filmsWatchedMax) {
         topGenre = prop;
@@ -131,7 +107,6 @@ const getStatsCounters = (array, filter) => {
 
   let rank;
   const getYourRank = () => {
-
     for (let prop in statsCounters.ranks) {
       if (statsCounters.ranks[prop] === topGenre) {
         rank = prop;

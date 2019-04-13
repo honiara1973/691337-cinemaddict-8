@@ -26,27 +26,27 @@ const Filters = [
 ];
 
 const searchField = document.querySelector(`.search__field`);
+const rankField = document.querySelector(`.profile__rating`);
 const mainContainer = document.querySelector(`.main`);
-const filmsContainer = document.querySelector(`.films`);
 const filterContainer = document.querySelector(`.main-navigation`);
+const filmsContainer = document.querySelector(`.films`);
 const filmsListContainer = document.querySelector(`.films-list .films-list__container`);
 const filmsListExtras = [...document.querySelectorAll(`.films-list--extra .films-list__container`)];
 const nextPageButton = document.querySelector(`.films-list__show-more`);
-const rankField = document.querySelector(`.profile__rating`);
 const footerStatistik = document.querySelector(`.footer__statistics p`);
-
-const countFilmsWatched = () => {
-  return allFilms.reduce((acc, it) => it.isWatched === true ?
-    acc + 1 : acc, 0);
-};
 
 const countFilmsInWatchList = () => {
   return allFilms.reduce((acc, it) => it.inWatchList === true ?
     acc + 1 : acc, 0);
 };
 
+const countFilmsWatched = () => {
+  return allFilms.reduce((acc, it) => it.isWatched === true ?
+    acc + 1 : acc, 0);
+};
+
 const countFilmsFavorite = () => {
-  return allFilms.reduce((acc, el) => el.isFavorite === true ?
+  return allFilms.reduce((acc, it) => it.isFavorite === true ?
     acc + 1 : acc, 0);
 };
 
@@ -80,7 +80,6 @@ const getUserRank = () => {
 };
 
 const filterFilms = (films, filterName) => {
-
   switch (filterName) {
     case `all`:
       return allFilms;
@@ -155,42 +154,36 @@ const renderFilmCard = (container, filmData, boolean) => {
   };
 
   film.onAddToWatchList = (newObject) => {
-    console.log(filmData.inWatchList);
     filmData.inWatchList = newObject.inWatchList;
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
       film.updateControls(newFilmData);
       filmDetails.updateControls(newFilmData);
       document.querySelector(`a[href=watchlist] .main-navigation__item-count`)
-    .innerHTML = countFilmsInWatchList();
-      console.log(newFilmData.inWatchList);
+      .innerHTML = countFilmsInWatchList();
     });
   };
 
   film.onMarkAsWatched = (newObject) => {
-    console.log(filmData.isWatched);
     filmData.isWatched = newObject.isWatched;
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
       film.updateControls(newFilmData);
       filmDetails.updateControls(newFilmData);
       document.querySelector(`a[href=history] .main-navigation__item-count`)
-    .innerHTML = countFilmsWatched();
+      .innerHTML = countFilmsWatched();
       updateRankField(getUserRank());
-      console.log(newFilmData.isWatched);
     });
   };
 
   film.onAddToFavorite = (newObject) => {
-    console.log(filmData.isFavorite);
     filmData.isFavorite = newObject.isFavorite;
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
       film.updateControls(newFilmData);
       filmDetails.updateControls(newFilmData);
       document.querySelector(`a[href=favorites] .main-navigation__item-count`)
-    .innerHTML = countFilmsFavorite();
-      console.log(newFilmData.isFavorite);
+      .innerHTML = countFilmsFavorite();
     });
   };
 
@@ -296,7 +289,6 @@ const init = () => {
   api.getFilms()
   .then((it) => {
     allFilms = it;
-    console.log(allFilms);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -319,11 +311,9 @@ const init = () => {
 
     currentPageNumber += 1;
     const endNumber = currentPageNumber * FILMS_AMOUNT_PER_PAGE;
-
     if (endNumber >= filteredFilms.length) {
       nextPageButton.classList.add(`visually-hidden`);
     }
-
     filteredFilms
     .slice(0, endNumber)
     .forEach((it) => renderFilmCard(filmsListContainer, it, true));
