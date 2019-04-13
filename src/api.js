@@ -1,32 +1,30 @@
 import ModelFilm from './model-film';
 
+const SUCCESS_STATUS_MIN = 200;
+const SUCCESS_STATUS_MAX = 299;
 const MESSAGE_SHOW_INTERVAL = 1000;
+const LOAD_MESSAGE = `Loading movies...`;
+const ERROR_MESSAGE =
+`Something went wrong while loading movies.
+Check your connection or try again later`;
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
   PUT: `PUT`,
   DELETE: `DELETE`
 };
-const SUCCESS_STATUS_MIN = 200;
-const SUCCESS_STATUS_MAX = 299;
-
-const LOAD_MESSAGE = `Loading movies...`;
-const ERROR_MESSAGE =
-`Something went wrong while loading movies.
-Check your connection or try again later`;
 
 const createMessage = (message) => {
   const messageElement = document.createElement(`div`);
 
   const messageContainer = document.querySelector(`.main`);
-
   messageElement.style =
   `z-index: 100; margin: 300 auto; text-align: center; background-color: grey;`;
   messageElement.style.position = `fixed`;
   messageElement.style.left = 0;
   messageElement.style.right = 0;
   messageElement.style.fontSize = `24px`;
-
   messageElement.textContent = message;
   messageContainer.insertAdjacentElement(`afterbegin`, messageElement);
 
@@ -93,12 +91,11 @@ class API {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-          .then(checkStatus)
-          .catch((err) => {
-            createMessage(ERROR_MESSAGE);
-            // console.error(`fetch error: ${err}`);
-            throw err;
-          });
+      .then(checkStatus)
+      .catch((err) => {
+        createMessage(ERROR_MESSAGE);
+        throw err;
+      });
   }
 }
 

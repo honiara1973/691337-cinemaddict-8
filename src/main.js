@@ -5,9 +5,10 @@ import FilmDetails from './film-details';
 import renderStats from './stats-controller';
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
-const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle`;
 
 const FILMS_AMOUNT_PER_PAGE = 5;
+const FIRST_PAGE_NUMBER = 1;
 const TOP_FILMS_AMOUNT = 2;
 const WATCHED_AMOUNT_LOW = 10;
 const WATCHED_AMOUNT_HIGH = 20;
@@ -18,9 +19,9 @@ let filteredFilms;
 
 const Filters = [
   [`All movies`, false, true],
-  [`Watchlist`, true],
-  [`History`, true],
-  [`Favorites`, true],
+  [`Watchlist`],
+  [`History`],
+  [`Favorites`],
   [`Stats`, false, false, true]
 ];
 
@@ -102,7 +103,7 @@ const getAllFilters = () => {
   const filters = [];
 
   for (let el of Filters) {
-    const [caption, hasCounter, isActive = false, isAdditional = false] = el;
+    const [caption, hasCounter = true, isActive = false, isAdditional = false] = el;
 
     const filter = {
       caption,
@@ -309,7 +310,7 @@ const init = () => {
     filteredFilms = filterFilms(allFilms, `all`);
   });
 
-  let currentPageNumber = 0;
+  let currentPageNumber = FIRST_PAGE_NUMBER;
   nextPageButton.addEventListener(`click`, () => {
 
     while (filmsListContainer.firstChild) {
@@ -317,17 +318,14 @@ const init = () => {
     }
 
     currentPageNumber += 1;
-    const startNumber = FILMS_AMOUNT_PER_PAGE * currentPageNumber;
-    const endNumber = startNumber + FILMS_AMOUNT_PER_PAGE;
-
+    const endNumber = currentPageNumber * FILMS_AMOUNT_PER_PAGE;
 
     if (endNumber >= filteredFilms.length) {
       nextPageButton.classList.add(`visually-hidden`);
-      currentPageNumber = 0;
     }
 
     filteredFilms
-    .slice(startNumber, endNumber)
+    .slice(0, endNumber)
     .forEach((it) => renderFilmCard(filmsListContainer, it, true));
   });
 
@@ -352,6 +350,7 @@ const init = () => {
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
     newFilter.classList.add((`main-navigation__item--active`));
+    currentPageNumber = FIRST_PAGE_NUMBER;
 
     while (filmsListContainer.firstChild) {
       filmsListContainer.removeChild(filmsListContainer.firstChild);
