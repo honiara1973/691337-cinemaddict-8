@@ -198,6 +198,7 @@ const renderFilmCard = (container, filmData, boolean) => {
     const commentInput = document.querySelector(`.film-details__comment-input`);
     commentInput.disabled = true;
     commentInput.style.border = null;
+    const currentComments = filmData.comments;
     filmData.comments = [...filmData.comments].concat(newObject.userComment);
     api.updateFilm({id: filmData.id, data: filmData.toRAW()})
     .then((newFilmData) => {
@@ -208,6 +209,7 @@ const renderFilmCard = (container, filmData, boolean) => {
     })
     .catch(() => {
       filmDetails.shake(commentLabel);
+      filmData.comments = currentComments;
       commentInput.style.border = `3px solid red`;
       commentInput.disabled = false;
     });

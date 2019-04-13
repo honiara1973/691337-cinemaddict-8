@@ -1,7 +1,5 @@
 import * as moment from 'moment';
-
 import Component from './component';
-
 
 const MIN_IN_HOUR = 60;
 
@@ -25,9 +23,9 @@ class FilmCard extends Component {
     this._onAddToFavorite = null;
 
     this._onCommentsButtonClick = this._onCommentsButtonClick.bind(this);
-    this._addToWatchList = this._addToWatchList.bind(this);
-    this._markAsWatched = this._markAsWatched.bind(this);
-    this._addToFavorite = this._addToFavorite.bind(this);
+    this._onChangeToWatchList = this._onChangeToWatchList.bind(this);
+    this._onChangeWatched = this._onChangeWatched.bind(this);
+    this._onChangeToFavorite = this._onChangeToFavorite.bind(this);
   }
 
   _processControls() {
@@ -45,7 +43,7 @@ class FilmCard extends Component {
     }
   }
 
-  _addToWatchList(evt) {
+  _onChangeToWatchList(evt) {
     evt.preventDefault();
     this._inWatchList = !this._inWatchList;
     const newData = this._processControls();
@@ -55,7 +53,7 @@ class FilmCard extends Component {
     this.updateControls(newData);
   }
 
-  _markAsWatched(evt) {
+  _onChangeWatched(evt) {
     evt.preventDefault();
     this._isWatched = !this._isWatched;
     const newData = this._processControls();
@@ -65,7 +63,7 @@ class FilmCard extends Component {
     this.updateControls(newData);
   }
 
-  _addToFavorite(evt) {
+  _onChangeToFavorite(evt) {
     evt.preventDefault();
     this._isFavorite = !this._isFavorite;
     const newData = this._processControls();
@@ -154,11 +152,11 @@ class FilmCard extends Component {
 
     if (this._onControls) {
       this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
-    .addEventListener(`click`, this._addToWatchList);
+    .addEventListener(`click`, this._onChangeToWatchList);
       this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
-    .addEventListener(`click`, this._markAsWatched);
+    .addEventListener(`click`, this._onChangeWatched);
       this._element.querySelector(`.film-card__controls-item--favorite`)
-    .addEventListener(`click`, this._addToFavorite);
+    .addEventListener(`click`, this._onChangeToFavorite);
     }
   }
 }

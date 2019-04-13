@@ -93,10 +93,18 @@ class FilmDetails extends Component {
 
   _onChangeToWatchList() {
     this._inWatchList = !this._inWatchList;
+
+    if (this._inWatchList) {
+      this.partialUpdate(`addToWatchList`);
+    }
   }
 
   _onChangeWatched() {
     this._isWatched = !this._isWatched;
+
+    if (this._isWatched) {
+      this.partialUpdate(`addToWatched`);
+    }
   }
 
   _onChangeToFavorite() {
@@ -107,6 +115,7 @@ class FilmDetails extends Component {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEYCODE) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
+      this._element.querySelector(`#add-emoji`).checked = false;
       if (typeof this._onSendComment === `function`) {
         this._onSendComment(newData);
       }
@@ -293,7 +302,8 @@ class FilmDetails extends Component {
 
     <section class="film-details__user-rating-wrap">
       <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status film-details__watched-status--active"></span>
+        <span class="film-details__watched-status film-details__watched-status--active">
+        ${this._isWatched === true ? `already watched` : ``}</span>
         <button class="film-details__watched-reset visually-hidden" type="button">undo</button>
       </div>
 
@@ -392,6 +402,16 @@ class FilmDetails extends Component {
     .classList.add(`visually-hidden`);
       this._element.querySelector(`.film-details__comments-list`)
     .innerHTML = this._getCommentsTemplate();
+    }
+
+    if (data === `addToWatchList`) {
+      this._element.querySelector(`.film-details__watched-status`)
+      .innerHTML = `will watch`;
+    }
+
+    if (data === `addToWatched`) {
+      this._element.querySelector(`.film-details__watched-status`)
+      .innerHTML = `already watched`;
     }
 
     this.removeListeners();
