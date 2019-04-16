@@ -99,40 +99,16 @@ const filterFilms = (films, filterName) => {
 };
 
 const getAllFilters = () => {
-  const filters = [];
-
-  for (let el of Filters) {
-    const [caption, hasCounter = true, isActive = false, isAdditional = false] = el;
-
-    const filter = {
+  return Filters.map((it) => {
+    const [caption, hasCounter = true, isActive = false, isAdditional = false] = it;
+    return {
       caption,
       hasCounter,
       isActive,
       isAdditional,
       counter: getFilterCounter(caption),
     };
-
-    filters.push(filter);
-  }
-  return filters;
-};
-
-const getEventFilter = (evt) => {
-  const filterCaptions = {
-    all: document.querySelector(`a[href=all]`),
-    watchlist: document.querySelector(`a[href=watchlist]`),
-    history: document.querySelector(`a[href=history]`),
-    favorites: document.querySelector(`a[href=favorites]`),
-    stats: document.querySelector(`a[href=stats]`),
-  };
-
-  let filterCaption;
-  for (let prop in filterCaptions) {
-    if (evt.target === filterCaptions[prop]) {
-      filterCaption = prop;
-    }
-  }
-  return filterCaption;
+  });
 };
 
 const renderFilter = (data) => {
@@ -289,7 +265,6 @@ const init = () => {
   api.getFilms()
   .then((it) => {
     allFilms = it;
-    console.log(allFilms);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();
@@ -337,6 +312,13 @@ const init = () => {
 
   filterContainer.addEventListener(`click`, (evt) => {
     evt.preventDefault();
+    const FilterCaption = {
+      all: document.querySelector(`a[href=all]`),
+      watchlist: document.querySelector(`a[href=watchlist]`),
+      history: document.querySelector(`a[href=history]`),
+      favorites: document.querySelector(`a[href=favorites]`),
+      stats: document.querySelector(`a[href=stats]`),
+    };
     const newFilter = evt.target;
     const currentFilter = filterContainer.querySelector(`.main-navigation__item--active`);
     currentFilter.classList.remove(`main-navigation__item--active`);
@@ -356,7 +338,9 @@ const init = () => {
       filmsContainer.classList.remove(`visually-hidden`);
     }
 
-    const filterCaption = getEventFilter(evt);
+    const filterCaption = Object.entries(FilterCaption)
+    .reduce((acc, [key, value]) => value === newFilter ? key : acc, ``);
+
     filteredFilms = filterFilms(allFilms, filterCaption);
 
     if (filterCaption === `stats`) {

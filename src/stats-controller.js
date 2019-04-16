@@ -95,24 +95,15 @@ const getStatsCounters = (array, filter) => {
   Object.keys(statsCounters.genresWatched).forEach((it) => countFilmGenres(it));
 
   const filmsWatchedMax = Math.max(...Object.values(statsCounters.genresWatched));
-  let topGenre;
+
   const getTopGenre = () => {
-    for (let prop in statsCounters.genresWatched) {
-      if (statsCounters.genresWatched[prop] === filmsWatchedMax) {
-        topGenre = prop;
-      }
-    }
-    return topGenre;
+    return filmsWatchedMax > 0 ? Object.entries(statsCounters.genresWatched)
+    .reduce((acc, [key, value]) => value === filmsWatchedMax && acc === `` ? key : acc, ``) : ``;
   };
 
-  let rank;
   const getYourRank = () => {
-    for (let prop in statsCounters.ranks) {
-      if (statsCounters.ranks[prop] === topGenre) {
-        rank = prop;
-      }
-    }
-    return rank;
+    return Object.entries(statsCounters.ranks)
+    .reduce((acc, [key, value]) => value === statsCounters.topGenre ? key : acc, ``);
   };
 
   statsCounters.topGenre = getTopGenre();
