@@ -1,4 +1,4 @@
-const СhartOptions = {
+const СhartOption = {
   plugins: {
     datalabels: {
       font: {
@@ -42,4 +42,4 @@ const СhartOptions = {
   }
 };
 
-export default СhartOptions;
+export default СhartOption;

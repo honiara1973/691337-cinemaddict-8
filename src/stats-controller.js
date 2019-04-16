@@ -3,7 +3,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import Stats from './stats';
 import StatsFilter from './stats-filter';
-import ChartOptions from './chart-options';
+import ChartOption from './chart-option';
 
 const MIN_IN_HOUR = 60;
 const MS_IN_DAY = 24 * 60 * 60 * 1000;
@@ -143,7 +143,7 @@ const renderStats = (array) => {
         anchor: `start`
       }]
     },
-    options: ChartOptions,
+    options: ChartOption,
   });
   statisticCtx.innerHTML = myChart;
 

@@ -181,7 +181,7 @@ class FilmDetails extends Component {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${it.author}</span>
         <span class="film-details__comment-day">
-        ${moment(it.date).startOf(`hour`).fromNow()}</span>
+        ${moment(it.date).startOf(`second`).fromNow()}</span>
       </p>
     </div>
   </li>

@@ -289,6 +289,7 @@ const init = () => {
   api.getFilms()
   .then((it) => {
     allFilms = it;
+    console.log(allFilms);
     countFilmsWatched();
     countFilmsInWatchList();
     countFilmsFavorite();

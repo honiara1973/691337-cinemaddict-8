@@ -2,6 +2,7 @@ import * as moment from 'moment';
 import Component from './component';
 
 const MIN_IN_HOUR = 60;
+const MAX_DESCR_LENGTH = 140;
 
 class FilmCard extends Component {
   constructor(data) {
@@ -109,7 +110,7 @@ class FilmCard extends Component {
        </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
       ${this._onControls ? `
-      <p class="film-card__description">${this._descr}</p>
+      <p class="film-card__description">${this._descr.substr(0, MAX_DESCR_LENGTH)}</p>
       ` : ``}
       <button class="film-card__comments">${this._commentsCounter} comments</button>
       ${this._onControls ? `
